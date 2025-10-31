@@ -14,20 +14,29 @@ datasource db {
 }
 
 model user {
-  userId String @id @default(uuid())
-  username String 
-  contact Int @unique
-  gmail String ?
+  userId   String  @id @default(uuid())
+  username String
+  contact  Int     @unique
+  gmail    String?
 }
 
 model farmer {
-  farmerID String @id @default(uuid())
-  username String 
-  contact Int @unique
-  address String
-  gmail String @unique
-  verified Boolean @default(false)
-  citizenShip_front  String ?
-  citizenShip_back String ?
+  farmerID          String    @id @default(uuid())
+  username          String
+  contact           Int       @unique
+  address           String
+  gmail             String    @unique
+  verified          Boolean   @default(false)
+  citizenShip_front String?
+  citizenShip_back  String?
+  products          product[]
 }
 
+model product {
+  productId   String  @id @default(uuid())
+  productName String
+  price       Decimal
+  description String
+  seller      farmer  @relation(fields: [sellerId], references: [farmerID])
+  sellerId    String 
+}
