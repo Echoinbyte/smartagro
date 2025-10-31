@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, RotateCcw, Save, Shuffle } from "lucide-react";
 import Bounded from "./landing/Bounded";
 import StarGrid from "./landing/StarGrid";
+import { FaCloudUploadAlt } from "react-icons/fa";
 
 function Add() {
   const video = useRef<HTMLVideoElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCaptured, setIsCaptured] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
@@ -59,6 +61,35 @@ function Add() {
     setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
   };
 
+  const handleUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCapturedFile(file);
+        setIsCaptured(true);
+
+        if (canvas.current) {
+          const img = new Image();
+          img.onload = () => {
+            if (canvas.current) {
+              canvas.current.width = img.width;
+              canvas.current.height = img.height;
+              const context = canvas.current.getContext("2d");
+              context?.drawImage(img, 0, 0);
+            }
+          };
+          img.src = reader.result as string;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!canvas.current) return;
 
@@ -105,6 +136,13 @@ function Add() {
 
   return (
     <div className="relative w-[calc(100vw-1px)] h-[calc(100vh-1px)] overflow-hidden bg-white">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
       <video
         ref={video}
         autoPlay
@@ -121,41 +159,50 @@ function Add() {
       />
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-        {!isCaptured ? (
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleCapture}
-              className="bg-white rounded-full p-4 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
-              aria-label="Capture photo"
-            >
-              <Camera className="w-8 h-8 text-gray-800" />
-            </button>
-            <button
-              onClick={handleFlip}
-              className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
-              aria-label="Flip"
-            >
-              <Shuffle className="w-6 h-6 text-gray-800" />
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleRetake}
-              className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
-              aria-label="Retake photo"
-            >
-              <RotateCcw className="w-6 h-6 text-gray-800" />
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="bg-primary/90 rounded-full p-4 shadow-lg hover:bg-primary active:scale-95 transition-all duration-200 cursor-pointer"
-              aria-label="Submit"
-            >
-              <Save className="w-8 h-8 text-white" />
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {!isCaptured ? (
+            <>
+              <button
+                onClick={handleFlip}
+                className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
+                aria-label="Flip"
+              >
+                <Shuffle className="w-6 h-6 text-gray-800" />
+              </button>
+              <button
+                onClick={handleCapture}
+                className="bg-white rounded-full p-4 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
+                aria-label="Capture photo"
+              >
+                <Camera className="w-8 h-8 text-gray-800" />
+              </button>
+              <button
+                onClick={handleUpload}
+                className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
+                aria-label="Upload"
+              >
+                <FaCloudUploadAlt className="w-6 h-6 text-gray-800" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleRetake}
+                className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 active:scale-95 transition-all duration-200 cursor-pointer"
+                aria-label="Retake photo"
+              >
+                <RotateCcw className="w-6 h-6 text-gray-800" />
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="bg-primary/90 rounded-full p-4 shadow-lg hover:bg-primary active:scale-95 transition-all duration-200 cursor-pointer"
+                aria-label="Submit"
+              >
+                <Save className="w-8 h-8 text-white" />
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
