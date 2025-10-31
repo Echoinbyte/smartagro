@@ -65,7 +65,7 @@ function Add() {
             type: "image/jpeg",
           });
 
-          // Will handle Backend Logic
+          // TODO: Will handle Backend Logic
           console.log("Submitting file:", file);
         }
       },
