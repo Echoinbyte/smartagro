@@ -4,6 +4,7 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NoPage from "./components/shared/NoPage";
 import Login from "./page/auth/Login";
+import Landing from "./page/Landing";
 import Home from "./page/Home";
 
 createRoot(document.getElementById("root")!).render(
@@ -15,11 +16,12 @@ createRoot(document.getElementById("root")!).render(
           path="/"
           element={
             <div>
-              <Home />
+              <Landing />
             </div>
           }
         />
         <Route path="login" element={<Login />} />
+        <Route path="home" element={<Home />} />
         <Route path="*" element={<NoPage />} />
       </Routes>
     </BrowserRouter>
