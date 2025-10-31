@@ -3,6 +3,9 @@ import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import StarGrid from "./landing/StarGrid";
+import Products from "@/components/products/Products";
+import { products } from "@/config/mockProducts";
+import Bounded from "./landing/Bounded";
 
 function Home() {
   const navigate = useNavigate();
@@ -15,8 +18,14 @@ function Home() {
   }
   return (
     <main>
+      <header className="w-full h-8 flex flex-row items-center justify-between gap-4 bg-primary"></header>
+
       <StarGrid />
-      <BottomNavbar /> 
+
+      <Bounded className="mb-16">
+        <Products products={products}></Products>
+      </Bounded>
+      <BottomNavbar />
     </main>
   );
 }
