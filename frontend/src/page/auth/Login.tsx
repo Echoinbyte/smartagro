@@ -144,7 +144,7 @@ function Login() {
     <Bounded>
       <form
         onSubmit={handleSubmit}
-        className="w-full flex flex-col items-center justify-center gap-8"
+        className="w-full max-w-xl flex flex-col items-center justify-center gap-8"
       >
         <section className="w-full h-1/6 flex flex-col items-center justify-center">
           <StarGrid></StarGrid>
@@ -187,7 +187,7 @@ function Login() {
                   type="button"
                   role="combobox"
                   aria-expanded={open}
-                  className="border-input data-placeholder:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] h-9"
+                  className="border-input data-placeholder:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] h-9 cursor-pointer"
                 >
                   {credentials.identity
                     ? identities.find(
@@ -197,14 +197,15 @@ function Login() {
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
+              <PopoverContent className="w-full p-0" align="center">
                 <Command>
-                  <CommandInput placeholder="Search identity..." />
+                  <CommandInput  placeholder="Search identity..." />
                   <CommandList>
                     <CommandEmpty>No identity found.</CommandEmpty>
                     <CommandGroup>
                       {identities.map((identity) => (
                         <CommandItem
+                          className="cursor-pointer"
                           key={identity.value}
                           value={identity.value}
                           onSelect={(currentValue) => {

@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, RotateCcw, Save, Shuffle } from "lucide-react";
+import Bounded from "./landing/Bounded";
+import StarGrid from "./landing/StarGrid";
 
 function Add() {
   const video = useRef<HTMLVideoElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [isCaptured, setIsCaptured] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [capturedFile, setCapturedFile] = useState<File | null>(null);
   const [facingMode, setFacingMode] = useState<"user" | "environment">(
     "environment"
   );
@@ -65,7 +69,8 @@ function Add() {
             type: "image/jpeg",
           });
 
-          // TODO: Will handle Backend Logic
+          setCapturedFile(file);
+          setIsSubmitted(true);
           console.log("Submitting file:", file);
         }
       },
@@ -90,8 +95,16 @@ function Add() {
     };
   }, []);
 
+  if (isSubmitted && capturedFile) {
+    return (
+      <Bounded className="relative w-[calc(100vw-1px)] h-[calc(100vh-1px)] overflow-hidden bg-white">
+        <StarGrid></StarGrid>
+      </Bounded>
+    );
+  }
+
   return (
-    <div className="relative w-[calc(100vw-1px)] h-[calc(100vh-1px)] overflow-hidden bg-black">
+    <div className="relative w-[calc(100vw-1px)] h-[calc(100vh-1px)] overflow-hidden bg-white">
       <video
         ref={video}
         autoPlay
