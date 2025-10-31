@@ -42,7 +42,7 @@ const InputField: React.FC<InputFieldProps> = ({
   icon,
   className = "",
   inputClassName = "",
-  closeOption=false,
+  closeOption = false,
   onChange,
   onBlur,
 }) => {
@@ -69,7 +69,13 @@ const InputField: React.FC<InputFieldProps> = ({
         <input
           id={inputId}
           name={name}
-          type={isClosed ? "password" : !isClosed && type === "password" ? "text" : type}
+          type={
+            isClosed
+              ? "password"
+              : !isClosed && type === "password"
+              ? "text"
+              : type
+          }
           placeholder={placeholder}
           value={value}
           defaultValue={defaultValue}
