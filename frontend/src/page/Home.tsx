@@ -1,3 +1,4 @@
+import BottomNavbar from "@/components/BottomNavbar";
 import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,7 +12,11 @@ function Home() {
     toast.error("Please log in to access the home page.");
     return null;
   }
-  return <div>Home</div>;
+  return (
+    <main>
+      <BottomNavbar /> 
+    </main>
+  );
 }
 
 export default Home;
