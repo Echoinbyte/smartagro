@@ -305,6 +305,16 @@ function Add() {
                   name="price"
                 ></InputField>
               </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-foreground">
+                  Quantity
+                </label>
+                <InputField
+                  icon={<UserIcon />}
+                  placeholder="Quantity of the product"
+                  name="quantity"
+                ></InputField>
+              </div>
             </div>
           </section>
         </main>
