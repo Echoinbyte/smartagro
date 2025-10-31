@@ -128,8 +128,38 @@ function Add() {
 
   if (isSubmitted && capturedFile) {
     return (
-      <Bounded className="relative w-[calc(100vw-1px)] h-[calc(100vh-1px)] overflow-hidden bg-white">
-        <StarGrid></StarGrid>
+      <Bounded className="bg-white">
+        <main className="w-full max-w-4xl mx-auto flex flex-col items-center justify-start gap-8 px-4">
+          <div className="relative w-full flex flex-col items-center gap-4">
+            <StarGrid />
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              Details
+            </h1>
+          </div>
+          <section className="w-full flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl font-semibold text-foreground">
+                Product Image
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-3">
+                <div className="w-full aspect-video flex flex-col items-center justify-center rounded-xl cursor-pointer">
+                  <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
+                    <img
+                      src={
+                        capturedFile ? URL.createObjectURL(capturedFile) : ""
+                      }
+                      alt="Uploaded Product Image Preview"
+                      className="w-full h-full object-cover rounded"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
       </Bounded>
     );
   }
