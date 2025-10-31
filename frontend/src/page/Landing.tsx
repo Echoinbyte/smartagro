@@ -4,9 +4,7 @@ import AnimatedContent from "./landing/AnimatedContent";
 
 const Landing = (): JSX.Element => {
   return (
-    <Bounded
-      className="text-center"
-    >
+    <Bounded className="text-center">
       <AnimatedContent />
     </Bounded>
   );

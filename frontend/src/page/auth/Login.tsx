@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createUser } from "@/helper/db";
+import { useUser } from "@/context/UserContext";
 
 export interface GeolocationState {
   latitude: number | null;
@@ -44,6 +46,7 @@ const identities = [
 
 function Login() {
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const [currentLocation, setCurrentLocation] = useState<GeolocationState>({
     latitude: null,
@@ -110,7 +113,7 @@ function Login() {
       username: formData.get("username") as string,
       gmail: formData.get("gmail") as string,
       contact: formData.get("contact") as string,
-      identity: credentials.identity,
+      identity: credentials.identity as "user" | "farmer",
       latitude: currentLocation.latitude ? currentLocation.latitude : null,
       longitude: currentLocation.longitude ? currentLocation.longitude : null,
     };
@@ -120,6 +123,7 @@ function Login() {
     // Backend Logic
     try {
       console.log("Submitting login with:", loginData);
+      await createUser(loginData);
 
       if (loginData.username && loginData.contact) {
         console.log("Login successful! Redirecting to home page...");
@@ -131,6 +135,11 @@ function Login() {
       console.error("Login error:", error);
     }
   };
+
+  if (user && user.username) {
+    navigate("/home");
+    return null;
+  }
 
   return (
     <Bounded>
@@ -179,7 +188,7 @@ function Login() {
                   type="button"
                   role="combobox"
                   aria-expanded={open}
-                  className="border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] h-9"
+                  className="border-input data-placeholder:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] h-9"
                 >
                   {credentials.identity
                     ? identities.find(

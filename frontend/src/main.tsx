@@ -6,24 +6,27 @@ import NoPage from "./components/shared/NoPage";
 import Login from "./page/auth/Login";
 import Landing from "./page/Landing";
 import Home from "./page/Home";
+import ProviderWrapper from "./provider/ProviderWrapper";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route
-          index
-          path="/"
-          element={
-            <div>
-              <Landing />
-            </div>
-          }
-        />
-        <Route path="login" element={<Login />} />
-        <Route path="home" element={<Home />} />
-        <Route path="*" element={<NoPage />} />
-      </Routes>
-    </BrowserRouter>
+    <ProviderWrapper>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            index
+            path="/"
+            element={
+              <div>
+                <Landing />
+              </div>
+            }
+          />
+          <Route path="login" element={<Login />} />
+          <Route path="home" element={<Home />} />
+          <Route path="*" element={<NoPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ProviderWrapper>
   </StrictMode>
 );
