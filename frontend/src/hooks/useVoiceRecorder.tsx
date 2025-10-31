@@ -1,4 +1,5 @@
 import { useRef, useCallback } from "react";
+import axios from "axios";
 
 interface VoiceRecorderOptions {
   onTranscriptionComplete?: (text: string) => void;
@@ -23,14 +24,20 @@ export const useVoiceRecorder = ({
   const uploadAudio = useCallback(
     async (blob: Blob): Promise<string | null> => {
       const formData = new FormData();
-      formData.append("file", blob, "recording.webm");
+      formData.append("audio", blob, "recording.webm");
 
       try {
-        // TODO: Backend integration
-        const transcription = "transcription";
-        onTranscriptionComplete?.(transcription);
-        return "transcription";
+        const response = await axios.post(apiEndpoint, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const result = response.data;
+        onTranscriptionComplete?.(result);
+        return result;
       } catch (error) {
+        console.error("Error uploading audio:", error);
         onError?.(error as Error);
         return null;
       }
