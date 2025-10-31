@@ -8,18 +8,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Orb } from "./ui/orb";
+import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 
 function BottomNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { startRecording, stopRecording, isRecording } = useVoiceRecorder();
   const [isSpeechActive, setIsSpeechActive] = useState(false);
 
   const handleSpeechToggle = () => {
     if (isSpeechActive) {
       setIsSpeechActive(false);
       handleSpeech(location.pathname);
+      stopRecording();
     } else {
       setIsSpeechActive(true);
+      startRecording();
     }
   };
 
@@ -89,7 +93,7 @@ function BottomNavbar() {
                           <Orb
                             colors={["#CAFCDC", "#A0D1B9"]}
                             seed={1000}
-                            agentState={"listening"}
+                            agentState={isRecording ? "listening" : "thinking"}
                           />
                         </div>
                       </div>
