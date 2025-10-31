@@ -36,7 +36,7 @@ export default function Dropzone({
 
   return (
     <div
-      className="h-32 w-32 border-2 border-dashed flex flex-col items-center justify-center rounded cursor-pointer hover:border-blue-500 transition-all duration-300"
+      className="h-64 aspect-video border-2 border-dashed flex flex-col items-center justify-center rounded-xl cursor-pointer hover:border-primary transition-all duration-300"
       {...getRootProps()}
     >
       <input {...getInputProps()} />

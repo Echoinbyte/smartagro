@@ -2,6 +2,7 @@ import BottomNavbar from "@/components/BottomNavbar";
 import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import StarGrid from "./landing/StarGrid";
 
 function Home() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Home() {
   }
   return (
     <main>
+      <StarGrid />
       <BottomNavbar /> 
     </main>
   );
