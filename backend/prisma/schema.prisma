@@ -13,6 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderStatus {
+  ORDERED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+}
+
+
 model user {
   userId   String  @id @default(uuid())
   username String
@@ -36,7 +44,17 @@ model product {
   productId   String  @id @default(uuid())
   productName String
   price       Decimal
+  quantity    Decimal 
   description String
   seller      farmer  @relation(fields: [sellerId], references: [farmerID])
-  sellerId    String 
+  sellerId    String
+}
+
+model order {
+  orderId       String  @id @default(uuid())
+  productId     String
+  userId        String
+  PaymentMethod String
+  orderStatus   OrderStatus 
+  quantity Int
 }

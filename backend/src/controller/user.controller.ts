@@ -4,6 +4,7 @@ import { prisma } from "../Database/ConnectDB";
 import APIresponse from "../utility/APIresponse";
 import Errorhandler from "../utility/Errorhandler";
 import uploadOnCloud from "../utility/uploadToCloudinary";
+import { Prisma } from "@prisma/client";
 
 interface createUser {
   username: string;
@@ -37,6 +38,17 @@ const createUser = asyncHandeler(
       });
     }
     if (identity === "user") {
+      const isUserAvailabe = await prisma.user.findUnique({
+        where: {
+          contact: contact,
+        },
+      });
+      if (isUserAvailabe) {
+        throw new Errorhandler({
+          statusCode: 400,
+          message: "User with contact number already available !",
+        });
+      }
       const createUser = await prisma.user.create({
         data: {
           username: username,
@@ -59,53 +71,77 @@ const createUser = asyncHandeler(
       );
     }
     if (identity === "farmer") {
+      const isFarmerAvailable = await prisma.farmer.findUnique({
+        where: { contact },
+      });
+
+      if (isFarmerAvailable) {
+        throw new Errorhandler({
+          statusCode: 400,
+          message: "Farmer with contact number already available!",
+        });
+      }
+
       if (!(latitude && longitude)) {
         throw new Errorhandler({
           statusCode: 404,
-          message: "Latitude and longitude is required",
+          message: "Latitude and longitude are required",
         });
       }
 
       let fetched_address;
       try {
-        // Getting live location of the seller from his GPS tracked lat and long
+        // Fetch live location
         const apiRes = await fetch(
           `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=89df02ba673d478597b70cb330b159e7`
         );
         const data = await apiRes.json();
-        const addressObject = data.features[0].properties;
-        if (data) {
-          fetched_address = `${addressObject.city},${addressObject.county}`;
+        const addressObject = data?.features?.[0]?.properties;
+
+        if (addressObject?.city && addressObject?.county) {
+          fetched_address = `${addressObject.city}, ${addressObject.county}`;
         } else {
           fetched_address =
             "एक त्रुटि देखा पर्‍यो, कृपया म्यानुअल रूपमा स्थान इनपुट गर्नुहोस्";
         }
-      } catch (error) {
+      } catch {
         fetched_address =
           "एक त्रुटि देखा पर्‍यो, कृपया म्यानुअल रूपमा स्थान इनपुट गर्नुहोस्";
       }
 
-      const createFarmer = await prisma.farmer.create({
-        data: {
-          username: username,
-          contact: contact,
-          gmail: gmail,
-          address: fetched_address,
-        },
-      });
-      if (!createFarmer) {
+      try {
+        const createFarmer = await prisma.farmer.create({
+          data: {
+            username,
+            contact,
+            gmail,
+            address: fetched_address,
+          },
+        });
+
+        return res.status(200).json(
+          new APIresponse({
+            statusCode: 200,
+            message: "Farmer created successfully",
+            data: createFarmer,
+          })
+        );
+      } catch (error: any) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          const targetField = (error.meta?.target as string[])?.[0];
+          throw new Errorhandler({
+            statusCode: 409, // Conflict
+            message: `${targetField ?? "Field"} already exists.`,
+          });
+        }
         throw new Errorhandler({
-          statusCode: 400,
-          message: "Farmer not created !",
+          statusCode: 500,
+          message: "Database error while creating farmer",
         });
       }
-      return res.status(200).json(
-        new APIresponse({
-          statusCode: 200,
-          message: "Farmer created sucessfully",
-          data: createFarmer,
-        })
-      );
     }
   }
 );

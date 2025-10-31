@@ -14,9 +14,10 @@ interface product {
   price: number;
   description: string;
   sellerId: string;
+  quantity: number;
 }
 
-// Elleven labs speech to text 
+// Elleven labs speech to text
 const speechToText = async (audioFile: Express.Multer.File) => {
   const API_KEY = process.env.EllevenLabs_API_KEy;
   if (!API_KEY) {
@@ -124,9 +125,9 @@ const createProductFromVoice = asyncHandeler(async (req, res) => {
 
 const createProduct = asyncHandeler(
   async (req: Request<{}, {}, product>, res) => {
-    const { description, price, productName, sellerId } = req.body;
+    const { description, price, productName, sellerId, quantity } = req.body;
     if (
-      [description, price, productName, sellerId].some(
+      [description, price, productName, sellerId, quantity].some(
         (field) => field === "" || !field
       )
     ) {
@@ -142,6 +143,7 @@ const createProduct = asyncHandeler(
           price: Number(price),
           description: description,
           sellerId: sellerId,
+          quantity: quantity,
         },
       });
       if (!createProduct) {
@@ -166,4 +168,145 @@ const createProduct = asyncHandeler(
   }
 );
 
-export { createProduct, createProductFromVoice };
+const getProduct = asyncHandeler(async (req, res) => {
+  const { productId } = req.params;
+  if (!productId) {
+    throw new Errorhandler({
+      message: "Product Not available",
+      statusCode: 500,
+    });
+  }
+  const product = await prisma.product.findUnique({
+    where: {
+      productId: productId,
+    },
+  });
+  if (!product) {
+    throw new Errorhandler({
+      message: "Product Not found",
+      statusCode: 500,
+    });
+  }
+  return res.status(200)
+  .json(
+    new APIresponse({
+      data : product , 
+      statusCode : 200 ,
+      message : "Product fetced sucessfully !"
+    })
+  )
+});
+
+const getProducts = asyncHandeler(async (req, res) => {
+  try {
+    const products = await prisma.product.findMany();
+    return res.status(200).json(
+      new APIresponse({
+        data: products,
+        statusCode: 200,
+        message: "Products fetched sucessfully",
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    throw new Errorhandler({
+      message: "Internal server occured ! (create product)",
+      statusCode: 500,
+    });
+  }
+});
+
+const buyProduct = asyncHandeler(
+  async (
+    req: Request<
+      {},
+      {},
+      {
+        productId: string;
+        userId: string;
+        paymentMethod: "COD" | "ESEWA";
+        quantity: number;
+      }
+    >,
+    res
+  ) => {
+    const { productId, userId, paymentMethod, quantity } = req.body;
+    if (
+      [productId, userId, paymentMethod, quantity].some(
+        (field) => field === undefined || field === null || field === ""
+      )
+    ) {
+      throw new Errorhandler({
+        message: "All Fields are required",
+        statusCode: 400,
+      });
+    }
+    const isProductAvailable = await prisma.product.findUnique({
+      where: {
+        productId: productId,
+      },
+    });
+    if (!isProductAvailable) {
+      throw new Errorhandler({
+        message: "Product not available",
+        statusCode: 500,
+      });
+    }
+    const isClientAvailable = await prisma.user.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    if (!isClientAvailable) {
+      const isFarmerAvailable = await prisma.farmer.findUnique({
+        where: {
+          farmerID: userId,
+        },
+      });
+      if (!isFarmerAvailable) {
+        throw new Errorhandler({
+          message: "user not available",
+          statusCode: 500,
+        });
+      }
+    }
+    try {
+      const createOrder = await prisma.order.create({
+        data: {
+          productId: productId,
+          userId: userId,
+          PaymentMethod: paymentMethod,
+          orderStatus: "ORDERED",
+          quantity: quantity,
+        },
+      });
+      if (!createOrder) {
+        throw new Errorhandler({
+          message: "Internal server error [creating order]",
+          statusCode: 500,
+        });
+      }
+      return res.status(200).json(
+        new APIresponse({
+          data: createOrder,
+          statusCode: 200,
+          message: "Product Ordered sucessfully",
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      throw new Errorhandler({
+        message: "Internal server error",
+        statusCode: 500,
+      });
+    }
+  }
+);
+
+export {
+  createProduct,
+  createProductFromVoice,
+  getProducts,
+  buyProduct,
+  getProduct,
+};
