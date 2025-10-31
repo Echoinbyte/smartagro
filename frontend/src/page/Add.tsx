@@ -1,8 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, RotateCcw, Save, Shuffle } from "lucide-react";
+import {
+  Camera,
+  Loader,
+  Mic,
+  RotateCcw,
+  Save,
+  Shuffle,
+  UserIcon,
+} from "lucide-react";
 import Bounded from "./landing/Bounded";
 import StarGrid from "./landing/StarGrid";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import InputField from "@/components/shared/InputField";
+import { BarVisualizer } from "@/components/ui/bar-visualizer";
+import { SiTicktick } from "react-icons/si";
+import { FaX } from "react-icons/fa6";
+import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 
 function Add() {
   const video = useRef<HTMLVideoElement>(null);
@@ -10,6 +23,21 @@ function Add() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCaptured, setIsCaptured] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [speechModuleState, setSpeechModuleState] = useState<
+    "idle" | "listening" | "processing" | "completed" | "failed"
+  >("idle");
+  const { startRecording, stopRecording, isRecording } = useVoiceRecorder({
+    onTranscriptionComplete: (result) => {
+      console.log("Transcription Result:", result);
+      setSpeechModuleState("completed");
+    },
+    onError: (error) => {
+      console.error("Voice Recorder Error:", error);
+      setSpeechModuleState("failed");
+    },
+    apiEndpoint: "",
+  });
+
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
   const [facingMode, setFacingMode] = useState<"user" | "environment">(
     "environment"
@@ -128,14 +156,15 @@ function Add() {
 
   if (isSubmitted && capturedFile) {
     return (
-      <Bounded className="bg-white">
+      <Bounded>
+        <StarGrid />
         <main className="w-full max-w-4xl mx-auto flex flex-col items-center justify-start gap-8 px-4">
           <div className="relative w-full flex flex-col items-center gap-4">
-            <StarGrid />
             <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-              Details
+              Products
             </h1>
           </div>
+
           <section className="w-full flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <h2 className="text-xl font-semibold text-foreground">
@@ -145,7 +174,7 @@ function Add() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-3">
-                <div className="w-full aspect-video flex flex-col items-center justify-center rounded-xl cursor-pointer">
+                <div className="w-full aspect-video border-2 border-dashed flex flex-col items-center justify-center rounded-xl cursor-pointer">
                   <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
                     <img
                       src={
@@ -156,6 +185,125 @@ function Add() {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="w-full flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl font-semibold text-foreground">
+                Product Details
+              </h2>
+            </div>
+
+            <section className="flex flex-row items-center justify-center relative mb-4">
+              {speechModuleState === "listening" ? (
+                <>
+                  <div className="w-full h-30 flex flex-col items-center justify-center bg-[#F4F4F5] relative rounded-xl gap-2">
+                    <BarVisualizer
+                      state={isRecording ? "speaking" : "listening"}
+                      demo={true}
+                      barCount={15}
+                      minHeight={15}
+                      maxHeight={90}
+                      className="h-30 max-w-full"
+                    />
+                    <button
+                      onClick={() => {
+                        setSpeechModuleState("processing");
+                        stopRecording();
+                      }}
+                      className="absolute -bottom-5 left-1/2 -translate-x-1/2 z-20 bg-destructive/80 hover:bg-destructive/90 active:bg-destructive text-white rounded-full p-3 sm:p-4 transition-all duration-200 active:scale-95 touch-manipulation cursor-pointer"
+                      aria-label={"Speak"}
+                    >
+                      <FaX className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </button>
+                  </div>
+                </>
+              ) : speechModuleState === "processing" ? (
+                <>
+                  <div className="w-full h-30 flex flex-col items-center justify-center bg-[#F4F4F5] relative rounded-xl gap-2">
+                    <div
+                      onClick={() => setSpeechModuleState("completed")}
+                      className="z-20 bg-primary/80 hover:bg-primary/90 active:bg-primary text-white rounded-full p-3 sm:p-4 transition-all duration-200 active:scale-95 touch-manipulation cursor-pointer"
+                      aria-label={"processing"}
+                    >
+                      <Loader className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" />
+                    </div>
+                    Processing
+                  </div>
+                </>
+              ) : speechModuleState === "completed" ? (
+                <div className="w-full h-30 flex flex-row items-center justify-center bg-[#F4F4F5] relative rounded-xl gap-2">
+                  <div
+                    className="z-20 bg-primary/80 hover:bg-primary/90 active:bg-primary text-white rounded-full p-3 sm:p-4 transition-all duration-200 active:scale-95 touch-manipulation cursor-pointer"
+                    aria-label={"Speak"}
+                  >
+                    <SiTicktick className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  Completed
+                </div>
+              ) : speechModuleState === "failed" ? (
+                <div className="w-full h-30 flex flex-col items-center justify-center bg-[#F4F4F5] relative rounded-xl gap-2">
+                  <button
+                    onClick={() => {
+                      setSpeechModuleState("listening");
+                      startRecording();
+                    }}
+                    className="z-20 bg-destructive/80 hover:bg-destructive/90 active:bg-destructive text-white rounded-full p-3 sm:p-4 transition-all duration-200 active:scale-95 touch-manipulation cursor-pointer"
+                    aria-label={"Speak"}
+                  >
+                    <FaX className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
+                  Failed to generate! Try again.
+                </div>
+              ) : (
+                <div className="w-full h-30 flex flex-col items-center justify-center bg-[#F4F4F5] relative rounded-xl gap-2">
+                  <button
+                    onClick={() => {
+                      setSpeechModuleState("listening");
+                      startRecording();
+                    }}
+                    className="z-20 bg-primary/80 hover:bg-primary/90 active:bg-primary text-white rounded-full p-3 sm:p-4 transition-all duration-200 active:scale-95 touch-manipulation cursor-pointer"
+                    aria-label={"Speak"}
+                  >
+                    <Mic className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </button>
+                  Generate Using Speech
+                </div>
+              )}
+            </section>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-foreground">
+                  Name
+                </label>
+                <InputField
+                  icon={<UserIcon />}
+                  placeholder="Name of the product"
+                  name="name"
+                ></InputField>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-foreground">
+                  Description
+                </label>
+                <InputField
+                  icon={<UserIcon />}
+                  placeholder="Description of the product"
+                  name="description"
+                ></InputField>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-foreground">
+                  Price
+                </label>
+                <InputField
+                  icon={<UserIcon />}
+                  placeholder="Price of the product"
+                  name="price"
+                ></InputField>
               </div>
             </div>
           </section>
