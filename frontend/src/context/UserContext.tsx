@@ -1,7 +1,7 @@
 "use client";
 
 import { mockUser } from "@/config/mockUser";
-import { getCredentials, updateCurrentUser } from "@/helper/db";
+import { createUser, getCredentials, updateCurrentUser } from "@/helper/db";
 import type { User } from "@/types/User";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
@@ -9,6 +9,7 @@ interface UserContextType {
   user: User;
   loading: boolean;
   updateUser: (updates: Partial<User>) => void;
+  logUser: (userCredentials: User) => Promise<void>;
   setUser: React.Dispatch<React.SetStateAction<User>>;
   refreshUser: () => Promise<void>;
 }
@@ -55,6 +56,25 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logUser = async (userCredentials: User) => {
+    setLoading(true);
+
+    try {
+      const user = await getCredentials();
+      if (user && user.username) {
+        setUser(user);
+        updateCurrentUser(user);
+        return;
+      }
+      setUser(userCredentials);
+      await createUser(userCredentials);
+    } catch (error) {
+      console.error("Error logging in user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     refreshUser();
   }, []);
@@ -66,7 +86,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, loading, updateUser, setUser, refreshUser }}
+      value={{ user, loading, updateUser, logUser, setUser, refreshUser }}
     >
       {children}
     </UserContext.Provider>

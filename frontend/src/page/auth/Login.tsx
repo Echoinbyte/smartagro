@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createUser } from "@/helper/db";
 import { useUser } from "@/context/UserContext";
 
 export interface GeolocationState {
@@ -46,7 +45,7 @@ const identities = [
 
 function Login() {
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user, logUser } = useUser();
 
   const [currentLocation, setCurrentLocation] = useState<GeolocationState>({
     latitude: null,
@@ -123,7 +122,7 @@ function Login() {
     // Backend Logic
     try {
       console.log("Submitting login with:", loginData);
-      await createUser(loginData);
+      await logUser(loginData);
 
       if (loginData.username && loginData.contact) {
         console.log("Login successful! Redirecting to home page...");
