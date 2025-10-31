@@ -6,7 +6,17 @@ import fs from "fs";
 import path from "path";
 import FormData from "form-data";
 import axios from "axios";
+import { Request } from "express";
+import { prisma } from "../Database/ConnectDB";
 
+interface product {
+  productName: string;
+  price: number;
+  description: string;
+  sellerId: string;
+}
+
+// Elleven labs speech to text 
 const speechToText = async (audioFile: Express.Multer.File) => {
   const API_KEY = process.env.EllevenLabs_API_KEy;
   if (!API_KEY) {
@@ -57,6 +67,7 @@ const speechToText = async (audioFile: Express.Multer.File) => {
   }
 };
 
+// Gemini text enhancer + JSON manager
 const AI_enhancer = async (textToEnhance: string) => {
   const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API,
@@ -66,26 +77,93 @@ const AI_enhancer = async (textToEnhance: string) => {
       model: "gemini-2.5-flash",
       contents: `
     Generate a JSON object with:
-    note that Everything must be in nepali language 
+    note that Everything must be in nepali language in UTF-8 format like the nepali characters should be clear and easily readable
     -This is the input ${textToEnhance} , nepali message now you have to filter and enhance it 
     - price detected from the 
     - quantity : detect from here input
+    - expectedLifeSpan : detect from the input vege or fruit type / give maximum
+    - name : detect from input (Both eng and Nepali) like {english : englishName , nepali : NepaliName} 
     - description : this "${textToEnhance}" is a message of voice in nepali language given by the nepali farmers where he describes what he have produced and how much quantity . You have to enhance it and make a good product catalog description in nepali language.
     Respond only with JSON.
     `,
     });
     const rawText = response?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-    return JSON.parse(rawText)
+    return JSON.parse(rawText.trim().replace(/^```json|```$/g, ""));
   } catch (error) {
     console.log(error);
   }
 };
 
-const createProduct = asyncHandeler(async (req, res) => {
-  if (!req.file) return;
-  const a = await speechToText(req.file);
-  const enhanced = await AI_enhancer(a);
-  console.log(enhanced);
+const createProductFromVoice = asyncHandeler(async (req, res) => {
+  const voiceAudio = req.file;
+  if (voiceAudio) {
+    try {
+      const speechToTextResponse = await speechToText(voiceAudio);
+      const inhanced_response = await AI_enhancer(speechToTextResponse);
+      return res.status(200).json(
+        new APIresponse({
+          data: inhanced_response,
+          statusCode: 200,
+          message: "Voice audio fetched sucessfully !",
+        })
+      );
+    } catch (error) {
+      console.log("error : ", error);
+      throw new Errorhandler({
+        message: "Internal server error",
+        statusCode: 500,
+      });
+    }
+  } else {
+    throw new Errorhandler({
+      message: "Voice audio not received",
+      statusCode: 404,
+    });
+  }
 });
 
-export { createProduct };
+const createProduct = asyncHandeler(
+  async (req: Request<{}, {}, product>, res) => {
+    const { description, price, productName, sellerId } = req.body;
+    if (
+      [description, price, productName, sellerId].some(
+        (field) => field === "" || !field
+      )
+    ) {
+      throw new Errorhandler({
+        statusCode: 404,
+        message: "All fields are required !",
+      });
+    }
+    try {
+      const createProduct = await prisma.product.create({
+        data: {
+          productName: productName,
+          price: Number(price),
+          description: description,
+          sellerId: sellerId,
+        },
+      });
+      if (!createProduct) {
+        throw new Errorhandler({
+          message: "Internal server occured ! (create product)",
+          statusCode: 500,
+        });
+      }
+      return res.status(200).json(
+        new APIresponse({
+          statusCode: 200,
+          message: "Product created sucessfully",
+          data: createProduct,
+        })
+      );
+    } catch (error) {
+      throw new Errorhandler({
+        statusCode: 500,
+        message: "Internal Server error !",
+      });
+    }
+  }
+);
+
+export { createProduct, createProductFromVoice };

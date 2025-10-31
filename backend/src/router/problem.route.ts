@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { upload } from "../Middleware/Multer";
-import { createProduct } from "../controller/product.controller";
+import { createProduct, createProductFromVoice } from "../controller/product.controller";
 const router = Router()
 
-router.route('/add').post(upload.single("audio"), createProduct)
+router.route('/add-voice').post(upload.single("audio"), createProductFromVoice)
+router.route('/add').post(createProduct)
 
 export default router
