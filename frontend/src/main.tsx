@@ -7,6 +7,8 @@ import Login from "./page/auth/Login";
 import Landing from "./page/Landing";
 import Home from "./page/Home";
 import ProviderWrapper from "./provider/ProviderWrapper";
+import Add from "./page/Add";
+import Profile from "./page/Profile";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -24,9 +26,9 @@ createRoot(document.getElementById("root")!).render(
           />
           <Route path="login" element={<Login />} />
           <Route path="home" element={<Home />} />
-          {/* <Route path="orders" element={<Orders />} />
+          {/* <Route path="orders" element={<Orders />} /> */}
           <Route path="add" element={<Add />} />
-          <Route path="profile" element={<Profile />} /> */}
+          <Route path="profile" element={<Profile />} />
           <Route path="*" element={<NoPage />} />
         </Routes>
       </BrowserRouter>
