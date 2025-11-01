@@ -24,3 +24,22 @@ export interface UIProduct {
   createdAt: string;
   expectedLifeSpan: string;
 }
+
+export interface IndividualProduct {
+  productId: string;
+  productName: string;
+  description: string;
+  productImage: string;
+  price: string;
+  quantity: string;
+  createdAt: string;
+  expectedLifeSpan: string;
+  seller: {
+    farmerID: string;
+    verified: boolean;
+    username: string;
+    contact: string;
+    gmail: string;
+    address: string;
+  };
+}

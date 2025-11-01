@@ -4,27 +4,12 @@ import ImageSlider from "./ImageSlider";
 import { Skeleton } from "../ui/skeleton";
 import type { UIProduct } from "@/types/Product";
 import { formatDistanceToNow } from "date-fns";
+import { formatSmartValue } from "@/lib/formatSmartValue";
 
 interface productListingProps {
   product: UIProduct | null;
   index: number;
 }
-
-const formatSmartValue = (value: string | number): string => {
-  if (value == null) return "N/A";
-
-  const str = String(value).trim();
-
-  if (/[a-zA-Z₹$€£/]/.test(str)) {
-    return str.replace(/\s+/g, " ");
-  }
-
-  const num = parseFloat(str);
-  if (isNaN(num)) return str;
-
-  const formatted = num.toFixed(2).replace(/\.?0+$/, "");
-  return formatted;
-};
 
 const ProductListing = ({ product, index }: productListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -63,9 +48,9 @@ const ProductListing = ({ product, index }: productListingProps) => {
                   ? formatSmartValue(product.price)
                   : "रू. " + formatSmartValue(product.price)}
               </span>
-              <div className="font-medium">
+              <span className="font-medium">
                 उपलब्ध : {formatSmartValue(product.quantity)}
-              </div>
+              </span>
               <span className="text-[10px] font-light mt-1">
                 {formatDistanceToNow(product.createdAt ?? new Date(), {
                   addSuffix: true,
