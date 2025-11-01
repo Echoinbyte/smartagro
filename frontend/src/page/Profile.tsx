@@ -197,6 +197,7 @@ function Profile() {
                 ? handleSubmitForFarmers
                 : handleSubmitForUsers
             }
+            isLoading={isSaving}
             containerClass="w-full md:w-auto px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200"
           ></Button>
         </section>

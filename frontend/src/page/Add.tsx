@@ -22,9 +22,12 @@ import { MdTextFields } from "react-icons/md";
 import { API_BASE_URL } from "@/config/apiDetails";
 import { useUser } from "@/context/UserContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Add() {
   const { user } = useUser();
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const video = useRef<HTMLVideoElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,8 +55,7 @@ function Add() {
         quantity:
           result.data.quantity.value + " " + result.data.quantity.unit ||
           prev.quantity,
-        expectedLifeSpan:
-          result.data.expectedLifeSpan || prev.expectedLifeSpan,
+        expectedLifeSpan: result.data.expectedLifeSpan || prev.expectedLifeSpan,
       }));
       setSpeechModuleState("completed");
     },
@@ -172,26 +174,35 @@ function Add() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("productName", data.name);
-    formData.append("description", data.description);
-    formData.append("price", data.price);
-    formData.append("quantity", data.quantity);
-    formData.append("expectedLifeSpan", data.expectedLifeSpan);
-    formData.append("sellerId", user.id);
-    formData.append("picture", capturedFile);
+    setIsSubmitting(true);
 
-    const response = await axios.post(
-      `${API_BASE_URL}/products/add`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    try {
+      const formData = new FormData();
+      formData.append("productName", data.name);
+      formData.append("description", data.description);
+      formData.append("price", data.price);
+      formData.append("quantity", data.quantity);
+      formData.append("expectedLifeSpan", data.expectedLifeSpan);
+      formData.append("sellerId", user.id);
+      formData.append("picture", capturedFile);
 
-    console.log("Product Data:", response.data);
+      const response = await axios.post(
+        `${API_BASE_URL}/products/add`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Product Data:", response.data);
+      navigate("/home");
+    } catch (error) {
+      console.error("Error submitting product data:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -388,7 +399,11 @@ function Add() {
               </div>
 
               <section className="flex flex-row items-center justify-center col-span-2 mt-4">
-                <Button type="submit" title="Create Product"></Button>
+                <Button
+                  type="submit"
+                  title="Create Product"
+                  isLoading={isSubmitting}
+                ></Button>
               </section>
             </form>
           </section>

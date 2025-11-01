@@ -46,6 +46,7 @@ const identities = [
 function Login() {
   const navigate = useNavigate();
   const { user, logUser } = useUser();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [currentLocation, setCurrentLocation] = useState<GeolocationState>({
     latitude: null,
@@ -107,6 +108,8 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsSubmitting(true);
+
     const formData = new FormData(e.currentTarget);
     const loginData = {
       id: "",
@@ -131,6 +134,8 @@ function Login() {
       }
     } catch (error) {
       console.error("Login error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -173,7 +178,7 @@ function Login() {
           <InputField
             type="gmail"
             name="gmail"
-            placeholder="Gmail"
+            placeholder="Gmail (Optional)"
             icon={<IoMdMail />}
             value={credentials.gmail}
             onChange={handleInputChange}
@@ -237,7 +242,11 @@ function Login() {
           </div>
         </section>
         <section className="w-full flex flex-row items-center justify-center">
-          <Button type="submit" title={"Login"}></Button>
+          <Button
+            isLoading={isSubmitting}
+            type="submit"
+            title={"Login"}
+          ></Button>
         </section>
       </form>
     </Bounded>

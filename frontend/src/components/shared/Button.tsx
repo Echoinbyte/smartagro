@@ -1,9 +1,11 @@
 import clsx from "clsx";
+import { Loader } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface ButtonProps {
   id?: string;
   title: string;
+  isLoading?: boolean;
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
   containerClass?: string;
@@ -24,6 +26,7 @@ const Button = ({
   containerClass,
   onClick,
   href,
+  isLoading,
   variant = "primary",
   size = "md",
   type = "button",
@@ -50,21 +53,27 @@ const Button = ({
               "flex flex-row items-center justify-center gap-2 group relative z-10 w-fit overflow-hidden rounded-full font-general text-xs uppercase",
               sizeClass,
               variantClass,
-              disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+              disabled || isLoading
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer",
               containerClass
             )}
           >
             {leftIcon}
-
-            <span className="relative inline-flex overflow-hidden">
-              <div className="translate-y-0 skew-y-0 transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">
-                {title}
-              </div>
-              <div className="absolute translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">
-                {title}
-              </div>
-            </span>
-
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <Loader className="animate-spin"></Loader>
+              </span>
+            ) : (
+              <span className="relative inline-flex overflow-hidden">
+                <div className="translate-y-0 skew-y-0 transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                  {title}
+                </div>
+                <div className="absolute translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">
+                  {title}
+                </div>
+              </span>
+            )}{" "}
             {rightIcon}
           </button>
         </a>
@@ -73,7 +82,7 @@ const Button = ({
           id={id}
           type={type}
           aria-label={ariaLabel}
-          disabled={disabled}
+          disabled={disabled || isLoading}
           onClick={(e) => onClick?.(e)}
           className={clsx(
             "flex flex-row items-center justify-center gap-2 group relative z-10 w-fit overflow-hidden rounded-full font-general text-xs uppercase",
@@ -85,14 +94,20 @@ const Button = ({
         >
           {leftIcon}
 
-          <span className="relative inline-flex overflow-hidden">
-            <div className="translate-y-0 skew-y-0 transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">
-              {title}
-            </div>
-            <div className="absolute translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">
-              {title}
-            </div>
-          </span>
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <Loader className="animate-spin"></Loader>
+            </span>
+          ) : (
+            <span className="relative inline-flex overflow-hidden">
+              <div className="translate-y-0 skew-y-0 transition duration-500 group-hover:translate-y-[-160%] group-hover:skew-y-12">
+                {title}
+              </div>
+              <div className="absolute translate-y-[164%] skew-y-12 transition duration-500 group-hover:translate-y-0 group-hover:skew-y-0">
+                {title}
+              </div>
+            </span>
+          )}
 
           {rightIcon}
         </button>
