@@ -109,6 +109,7 @@ function Login() {
 
     const formData = new FormData(e.currentTarget);
     const loginData = {
+      id: "",
       username: formData.get("username") as string,
       gmail: formData.get("gmail") as string,
       contact: formData.get("contact") as string,
@@ -118,8 +119,6 @@ function Login() {
     };
 
     console.log("Login data:", loginData);
-
-    // TODO: Add Backend Logic
     try {
       console.log("Submitting login with:", loginData);
       await logUser(loginData);
@@ -199,7 +198,7 @@ function Login() {
               </PopoverTrigger>
               <PopoverContent className="w-full p-0" align="center">
                 <Command>
-                  <CommandInput  placeholder="Search identity..." />
+                  <CommandInput placeholder="Search identity..." />
                   <CommandList>
                     <CommandEmpty>No identity found.</CommandEmpty>
                     <CommandGroup>

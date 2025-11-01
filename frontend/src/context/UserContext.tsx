@@ -38,6 +38,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (user) {
         setUser({
+          id: user.id ?? null,
+          verified: user.verified ?? false,
+          citizenShip_front: user.citizenShip_front ?? null,
+          citizenShip_back: user.citizenShip_back ?? null,
           username: user.username ?? "",
           gmail: user.gmail ?? "",
           contact: user.contact ?? "",
@@ -56,18 +60,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const logUser = async (userCredentials: User) => {
+  const logUser = async (userCredentials: Partial<User>) => {
     setLoading(true);
 
     try {
       const user = await getCredentials();
       if (user && user.username) {
-        setUser(user);
-        updateCurrentUser(user);
         return;
       }
-      setUser(userCredentials);
-      await createUser(userCredentials);
+      const userData = await createUser(userCredentials);
+      setUser(userData);
     } catch (error) {
       console.error("Error logging in user:", error);
     } finally {

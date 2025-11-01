@@ -8,6 +8,9 @@ import InputField from "@/components/shared/InputField";
 import { MapPin } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
+import { API_BASE_URL } from "@/config/apiDetails";
 
 function Profile() {
   const { user, updateUser } = useUser();
@@ -33,12 +36,37 @@ function Profile() {
   };
 
   const handleSubmitForFarmers = async () => {
+    if (!frontCitizenship || !backCitizenship) {
+      console.error("Both citizenship documents are required");
+      return;
+    }
+
     setIsSaving(true);
 
     try {
-      // TODO: Backend call to add citizenship documents of farmers
-      console.log("Front Citizenship:", frontCitizenship);
-      console.log("Back Citizenship:", backCitizenship);
+      const formData = new FormData();
+      formData.append("citizenship-front", frontCitizenship);
+      formData.append("citizenship-back", backCitizenship);
+      formData.append("farmerId", user.id);
+
+      const response = await axios.post(
+        `${API_BASE_URL}/users/verify`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      await updateUser({
+        verified: response.data.data.verified,
+        citizenShip_back: response.data.data.citizenShip_back,
+        citizenShip_front: response.data.data.citizenShip_front,
+      });
+
+      toast.success("Citizenship documents submitted successfully!");
+      navigate("/home");
     } catch (error) {
       console.error("Error saving profile:", error);
     } finally {
