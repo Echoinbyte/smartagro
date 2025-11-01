@@ -8,13 +8,15 @@ import FormData from "form-data";
 import axios from "axios";
 import { Request } from "express";
 import { prisma } from "../Database/ConnectDB";
+import uploadOnCloud from "../utility/uploadToCloudinary";
 
 interface product {
   productName: string;
-  price: number;
+  price: string;
   description: string;
   sellerId: string;
-  quantity: number;
+  quantity: string;
+  expectedLifeSpan?: string;
 }
 
 // Elleven labs speech to text
@@ -80,8 +82,8 @@ const AI_enhancer = async (textToEnhance: string) => {
     Generate a JSON object with:
     note that Everything must be in nepali language in UTF-8 format like the nepali characters should be clear and easily readable
     -This is the input ${textToEnhance} , nepali message now you have to filter and enhance it 
-    - price detected from the 
-    - quantity : detect from here input
+    - price detected and only give the price as {value : string , unit : string } 
+    - quantity : detect from here input as { value : string , unit : string}
     - expectedLifeSpan : detect from the input vege or fruit type / give maximum
     - name : detect from input (Both eng and Nepali) like {english : englishName , nepali : NepaliName} 
     - description : this "${textToEnhance}" is a message of voice in nepali language given by the nepali farmers where he describes what he have produced and how much quantity . You have to enhance it and make a good product catalog description in nepali language.
@@ -125,7 +127,26 @@ const createProductFromVoice = asyncHandeler(async (req, res) => {
 
 const createProduct = asyncHandeler(
   async (req: Request<{}, {}, product>, res) => {
-    const { description, price, productName, sellerId, quantity } = req.body;
+    const {
+      description,
+      price,
+      productName,
+      sellerId,
+      quantity,
+      expectedLifeSpan,
+    } = req.body;
+    const picture = req.file;
+    let image_url;
+    try {
+      if (!picture) {
+        image_url = "";
+      } else {
+        const pictureUpload = await uploadOnCloud(picture?.path);
+        image_url = pictureUpload?.url;
+      }
+    } catch (error) {
+      console.log(error);
+    }
     if (
       [description, price, productName, sellerId, quantity].some(
         (field) => field === "" || !field
@@ -140,11 +161,17 @@ const createProduct = asyncHandeler(
       const createProduct = await prisma.product.create({
         data: {
           productName: productName,
-          price: Number(price),
+          price: price,
           description: description,
-          sellerId: sellerId,
           quantity: quantity,
-        },
+          expectedLifeSpan: expectedLifeSpan,
+          productImage: image_url,
+          seller: {
+            connect: {
+              farmerID: sellerId,
+            },
+          },
+        }
       });
       if (!createProduct) {
         throw new Errorhandler({
@@ -160,6 +187,7 @@ const createProduct = asyncHandeler(
         })
       );
     } catch (error) {
+      console.log(error);
       throw new Errorhandler({
         statusCode: 500,
         message: "Internal Server error !",
@@ -180,6 +208,9 @@ const getProduct = asyncHandeler(async (req, res) => {
     where: {
       productId: productId,
     },
+    include :{
+      seller : true
+    }
   });
   if (!product) {
     throw new Errorhandler({
@@ -187,14 +218,13 @@ const getProduct = asyncHandeler(async (req, res) => {
       statusCode: 500,
     });
   }
-  return res.status(200)
-  .json(
+  return res.status(200).json(
     new APIresponse({
-      data : product , 
-      statusCode : 200 ,
-      message : "Product fetced sucessfully !"
+      data: product,
+      statusCode: 200,
+      message: "Product fetced sucessfully !",
     })
-  )
+  );
 });
 
 const getProducts = asyncHandeler(async (req, res) => {

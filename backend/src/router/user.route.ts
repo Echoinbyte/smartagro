@@ -3,7 +3,7 @@ import { createUser, verifyFarmerKYC } from "../controller/user.controller";
 import { upload } from "../Middleware/Multer";
 const router = Router();
 
-router.route("/create").post(createUser);
+router.route("/create").post( createUser);
 router.route("/verify").post(
   upload.fields([
     {

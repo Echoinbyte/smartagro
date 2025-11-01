@@ -24,14 +24,15 @@ enum OrderStatus {
 model user {
   userId   String  @id @default(uuid())
   username String
-  contact  Int     @unique
+  contact  String     @unique
   gmail    String?
+  address address[]
 }
 
 model farmer {
   farmerID          String    @id @default(uuid())
   username          String
-  contact           Int       @unique
+  contact           String       @unique
   address           String
   gmail             String    @unique
   verified          Boolean   @default(false)
@@ -43,11 +44,13 @@ model farmer {
 model product {
   productId   String  @id @default(uuid())
   productName String
-  price       Decimal
-  quantity    Decimal 
+  productImage String @default("")
+  price       String
+  quantity    String 
   description String
   seller      farmer  @relation(fields: [sellerId], references: [farmerID])
   sellerId    String
+  expectedLifeSpan String?
 }
 
 model order {
@@ -57,4 +60,14 @@ model order {
   PaymentMethod String
   orderStatus   OrderStatus 
   quantity Int
+}
+
+model address {
+  addressId String @id @default(uuid())
+  province String
+  district String
+  localLevel String
+  street String
+  costumer user @relation(fields: [costumerId] , references: [userId])
+  costumerId String 
 }
