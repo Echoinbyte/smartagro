@@ -11,6 +11,7 @@ import Add from "./page/Add";
 import Profile from "./page/Profile";
 import ColdStorage from "./page/ColdStorage";
 import IndividualProductListing from "./page/IndividualProductListing";
+import Checkout from "./page/Checkout";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -30,6 +31,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="home" element={<Home />} />
           {/* <Route path="orders" element={<Orders />} /> */}
           <Route path="add" element={<Add />} />
+          <Route path="checkout" element={<Checkout />} />
           <Route path="coldstorage" element={<ColdStorage />} />
           <Route path="profile" element={<Profile />} />
           <Route
