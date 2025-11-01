@@ -9,6 +9,7 @@ import Home from "./page/Home";
 import ProviderWrapper from "./provider/ProviderWrapper";
 import Add from "./page/Add";
 import Profile from "./page/Profile";
+import ColdStorage from "./page/ColdStorage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -28,6 +29,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="home" element={<Home />} />
           {/* <Route path="orders" element={<Orders />} /> */}
           <Route path="add" element={<Add />} />
+          <Route path="coldstorage" element={<ColdStorage />} />
           <Route path="profile" element={<Profile />} />
           <Route path="*" element={<NoPage />} />
         </Routes>
