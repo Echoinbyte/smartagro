@@ -20,19 +20,17 @@ enum OrderStatus {
   DELIVERED
 }
 
-
 model user {
-  userId   String  @id @default(uuid())
+  userId   String    @id @default(uuid())
   username String
-  contact  String     @unique
+  contact  String    @unique
   gmail    String?
-  address address[]
 }
 
 model farmer {
   farmerID          String    @id @default(uuid())
   username          String
-  contact           String       @unique
+  contact           String    @unique
   address           String
   gmail             String    @unique
   verified          Boolean   @default(false)
@@ -42,32 +40,34 @@ model farmer {
 }
 
 model product {
-  productId   String  @id @default(uuid())
-  productName String
-  productImage String @default("")
-  price       String
-  quantity    String 
-  description String
-  seller      farmer  @relation(fields: [sellerId], references: [farmerID])
-  sellerId    String
+  productId        String  @id @default(uuid())
+  productName      String
+  productImage     String  @default("")
+  price            String
+  quantity         String
+  description      String
+  seller           farmer  @relation(fields: [sellerId], references: [farmerID])
+  sellerId         String
   expectedLifeSpan String?
 }
 
 model order {
-  orderId       String  @id @default(uuid())
+  orderId       String      @id @default(uuid())
   productId     String
   userId        String
   PaymentMethod String
-  orderStatus   OrderStatus 
-  quantity Int
+  orderStatus   OrderStatus
+  quantity      Int
+  addressId     String 
+  Address       address     @relation(fields: [addressId], references: [addressId])
 }
 
 model address {
-  addressId String @id @default(uuid())
-  province String
-  district String
+  addressId  String  @id @default(uuid())
+  province   String
+  district   String
   localLevel String
-  street String
-  costumer user @relation(fields: [costumerId] , references: [userId])
-  costumerId String 
+  street     String
+  costumerId String
+  Order      order[]
 }
