@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   Camera,
   Loader,
+  LucideText,
   Mic,
   RotateCcw,
   Save,
   Shuffle,
-  UserIcon,
 } from "lucide-react";
 import Bounded from "./landing/Bounded";
 import StarGrid from "./landing/StarGrid";
@@ -14,8 +14,11 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import InputField from "@/components/shared/InputField";
 import { BarVisualizer } from "@/components/ui/bar-visualizer";
 import { SiTicktick } from "react-icons/si";
-import { FaX } from "react-icons/fa6";
+import { FaIndianRupeeSign, FaX } from "react-icons/fa6";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
+import Button from "@/components/shared/Button";
+import { GoNumber } from "react-icons/go";
+import { MdTextFields } from "react-icons/md";
 
 function Add() {
   const video = useRef<HTMLVideoElement>(null);
@@ -136,6 +139,22 @@ function Add() {
       "image/jpeg",
       0.95
     );
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const productData = {
+      name: formData.get("name") as string,
+      description: formData.get("description") as string,
+      price: formData.get("price") as string,
+      quantity: formData.get("quantity") as string,
+      image: capturedFile,
+    };
+
+    // TODO: Backend integration
+    console.log("Product Data:", productData);
   };
 
   useEffect(() => {
@@ -274,23 +293,26 @@ function Add() {
               )}
             </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="flex flex-col">
+            <form
+              onSubmit={handleFormSubmit}
+              className="grid grid-cols-1 md:grid-cols-2 gap-3"
+            >
+              <div className="flex flex-col col-span-2">
                 <label className="text-sm font-medium text-foreground">
                   Name
                 </label>
                 <InputField
-                  icon={<UserIcon />}
+                  icon={<MdTextFields />}
                   placeholder="Name of the product"
                   name="name"
                 ></InputField>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col col-span-2">
                 <label className="text-sm font-medium text-foreground">
                   Description
                 </label>
                 <InputField
-                  icon={<UserIcon />}
+                  icon={<LucideText />}
                   placeholder="Description of the product"
                   name="description"
                 ></InputField>
@@ -300,7 +322,7 @@ function Add() {
                   Price
                 </label>
                 <InputField
-                  icon={<UserIcon />}
+                  icon={<FaIndianRupeeSign />}
                   placeholder="Price of the product"
                   name="price"
                 ></InputField>
@@ -310,12 +332,16 @@ function Add() {
                   Quantity
                 </label>
                 <InputField
-                  icon={<UserIcon />}
+                  icon={<GoNumber />}
                   placeholder="Quantity of the product"
                   name="quantity"
                 ></InputField>
               </div>
-            </div>
+
+              <section className="flex flex-row items-center justify-end col-span-2">
+                <Button type="submit" title="Create Product"></Button>
+              </section>
+            </form>
           </section>
         </main>
       </Bounded>
