@@ -70,7 +70,7 @@ function AdminDashboard() {
         const users = response.data.data;
         console.log("Fetched farmers:", users);
 
-        const sortedUsers = users.sort((a, b) => {
+        const sortedUsers = users.sort((a: UserVerification, b: UserVerification) => {
           if (a.verified === b.verified) return 0;
           return a.verified ? 1 : -1;
         });
@@ -78,8 +78,8 @@ function AdminDashboard() {
         setUsers(sortedUsers);
 
         const totalUsers = users.length;
-        const verifiedUsers = users.filter((u) => u.verified).length;
-        const pendingVerification = users.filter((u) => !u.verified).length;
+        const verifiedUsers = users.filter((u: UserVerification) => u.verified).length;
+        const pendingVerification = users.filter((u: UserVerification) => !u.verified).length;
 
         setStats({
           totalUsers,
