@@ -254,14 +254,14 @@ const buyProduct = asyncHandeler(
       {
         productId: string;
         userId: string;
-        paymentMethod: "COD" | "ESEWA";
+        paymentMethod: "COD" | "esewa";
         quantity: number;
-        addressId: string;
+        address: string;
       }
     >,
     res
   ) => {
-    const { productId, userId, paymentMethod, quantity, addressId } = req.body;
+    const { productId, userId, paymentMethod, quantity, address } = req.body;
     if (
       [productId, userId, paymentMethod, quantity].some(
         (field) => field === undefined || field === null || field === ""
@@ -304,20 +304,25 @@ const buyProduct = asyncHandeler(
     try {
       const createOrder = await prisma.order.create({
         data: {
-          productId: productId,
           userId: userId,
           PaymentMethod: paymentMethod,
           orderStatus: "ORDERED",
           quantity: quantity,
-          Address: {
+          address: address,
+          Product: {
             connect: {
-              addressId: addressId,
+              productId: productId,
+            },
+          },
+          user: {
+            connect: {
+              userId: userId,
             },
           },
         },
-        include : {
-          Address : true
-        }
+        include: {
+          Product: true,
+        },
       });
       if (!createOrder) {
         throw new Errorhandler({
