@@ -14,12 +14,12 @@ export const formatSmartValue = (value: string | number): string => {
   return formatted;
 };
 
-export function extractNumericValue(price: string): number | null {
-  if (!price) return null;
+export function extractNumericValue(price: string): number {
+  if (!price) return 0;
 
   const numericString = price.replace(/[^0-9०-९]/g, "");
 
-  if (!numericString) return null;
+  if (!numericString) return 0;
 
   const englishDigits = numericString.replace(/[०-९]/g, (digit) =>
     String("०१२३४५६७८९".indexOf(digit))
@@ -27,5 +27,5 @@ export function extractNumericValue(price: string): number | null {
 
   const num = Number(englishDigits);
 
-  return isNaN(num) ? null : num;
+  return isNaN(num) ? 0 : num;
 }

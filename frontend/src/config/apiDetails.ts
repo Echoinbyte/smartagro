@@ -3,7 +3,8 @@ export const API_BASE_URL = "https://l2vl5st5-3000.inc1.devtunnels.ms/api/v1";
 export interface UserApiResponse {
   statusCode: number;
   data: {
-    farmerID: string;
+    userId?: string;
+    farmerID?: string;
     username: string;
     contact: number;
     address?: string;

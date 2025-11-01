@@ -18,7 +18,7 @@ export const createUser = async (user: Partial<User>): Promise<User> => {
 
     if (response.data.statusCode === 200) {
       const userData: User = {
-        id: response.data.data.farmerID || "",
+        id: response.data.data.farmerID || response.data.data.userId || "",
         verified: response.data.data.verified || false,
         citizenShip_front: response.data.data.citizenShip_front || null,
         citizenShip_back: response.data.data.citizenShip_back || null,

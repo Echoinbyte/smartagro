@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import Bounded from "./landing/Bounded";
 import StarGrid from "./landing/StarGrid";
 import { useUser } from "@/context/UserContext";
-import { formatSmartValue } from "@/lib/formatSmartValue";
+import { extractNumericValue, formatSmartValue } from "@/lib/formatSmartValue";
 import { Package, ChevronRight } from "lucide-react";
 import type { Order } from "@/types/Order";
 import Loader from "@/components/shared/Loader";
@@ -69,10 +69,7 @@ function Orders() {
   };
 
   const calculateOrderTotal = (order: Order) => {
-    const price =
-      typeof order.Product.price === "string"
-        ? parseFloat(order.Product.price)
-        : order.Product.price;
+    const price = extractNumericValue(order.Product.price);
     return price * order.quantity;
   };
 

@@ -3,7 +3,7 @@ export interface OrderItem {
   productName: string;
   productImage: string;
   quantity: number;
-  price: number | string;
+  price: string;
   description: string;
   sellerId: string;
   expectedLifeSpan: string;
@@ -29,12 +29,7 @@ export interface FarmerOrder {
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   customerContact: string;
   orderDate: string;
-  deliveryAddress: {
-    country: string;
-    province: string;
-    district: string;
-    address: string;
-  };
+  deliveryAddress: string;
 }
 
 export interface DashboardStats {
