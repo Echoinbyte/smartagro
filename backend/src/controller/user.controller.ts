@@ -19,13 +19,14 @@ const createUser = asyncHandeler(
   async (req: Request<{}, {}, createUser>, res) => {
     const { username, contact, gmail, identity, latitude, longitude } =
       req.body;
+    const Contact = String(contact)
     if (!username) {
       throw new Errorhandler({
         statusCode: 404,
         message: "Username is required",
       });
     }
-    if (!contact) {
+    if (!Contact) {
       throw new Errorhandler({
         statusCode: 404,
         message: "Conatct is required",
@@ -40,7 +41,7 @@ const createUser = asyncHandeler(
     if (identity === "user") {
       const isUserAvailabe = await prisma.user.findUnique({
         where: {
-          contact: contact,
+          contact: Contact,
         },
       });
       if (isUserAvailabe) {
@@ -52,7 +53,7 @@ const createUser = asyncHandeler(
       const createUser = await prisma.user.create({
         data: {
           username: username,
-          contact: contact,
+          contact: Contact,
           gmail: gmail,
         },
       });
@@ -72,7 +73,7 @@ const createUser = asyncHandeler(
     }
     if (identity === "farmer") {
       const isFarmerAvailable = await prisma.farmer.findUnique({
-        where: { contact: contact },
+        where: { contact: Contact },
       });
 
       if (isFarmerAvailable) {
@@ -113,7 +114,7 @@ const createUser = asyncHandeler(
         const createFarmer = await prisma.farmer.create({
           data: {
             username,
-            contact: contact,
+            contact: Contact,
             gmail,
             address: fetched_address,
           },

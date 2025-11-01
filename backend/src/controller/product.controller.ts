@@ -171,7 +171,7 @@ const createProduct = asyncHandeler(
               farmerID: sellerId,
             },
           },
-        }
+        },
       });
       if (!createProduct) {
         throw new Errorhandler({
@@ -208,9 +208,9 @@ const getProduct = asyncHandeler(async (req, res) => {
     where: {
       productId: productId,
     },
-    include :{
-      seller : true
-    }
+    include: {
+      seller: true,
+    },
   });
   if (!product) {
     throw new Errorhandler({
@@ -256,11 +256,12 @@ const buyProduct = asyncHandeler(
         userId: string;
         paymentMethod: "COD" | "ESEWA";
         quantity: number;
+        addressId: string;
       }
     >,
     res
   ) => {
-    const { productId, userId, paymentMethod, quantity } = req.body;
+    const { productId, userId, paymentMethod, quantity, addressId } = req.body;
     if (
       [productId, userId, paymentMethod, quantity].some(
         (field) => field === undefined || field === null || field === ""
@@ -308,7 +309,15 @@ const buyProduct = asyncHandeler(
           PaymentMethod: paymentMethod,
           orderStatus: "ORDERED",
           quantity: quantity,
+          Address: {
+            connect: {
+              addressId: addressId,
+            },
+          },
         },
+        include : {
+          Address : true
+        }
       });
       if (!createOrder) {
         throw new Errorhandler({
