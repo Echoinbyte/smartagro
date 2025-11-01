@@ -8,7 +8,7 @@ import { Prisma } from "@prisma/client";
 
 interface createUser {
   username: string;
-  contact: number;
+  contact: string;
   gmail: string;
   identity: "user" | "farmer";
   latitude?: number;
@@ -72,7 +72,7 @@ const createUser = asyncHandeler(
     }
     if (identity === "farmer") {
       const isFarmerAvailable = await prisma.farmer.findUnique({
-        where: { contact },
+        where: { contact: contact },
       });
 
       if (isFarmerAvailable) {
@@ -113,7 +113,7 @@ const createUser = asyncHandeler(
         const createFarmer = await prisma.farmer.create({
           data: {
             username,
-            contact,
+            contact: contact,
             gmail,
             address: fetched_address,
           },
@@ -147,7 +147,7 @@ const createUser = asyncHandeler(
 );
 
 const verifyFarmerKYC = asyncHandeler(async (req, res) => {
-  const { farmer_id } = req.body;
+  const { farmerId } = req.body;
   const files = req.files as {
     [fieldname: string]: Express.Multer.File[];
   };
@@ -169,7 +169,7 @@ const verifyFarmerKYC = asyncHandeler(async (req, res) => {
   }
   const updateSellerDB = await prisma.farmer.update({
     where: {
-      farmerID: farmer_id,
+      farmerID: farmerId,
     },
     data: {
       citizenShip_front: uploadCitizenshipFront.url,
