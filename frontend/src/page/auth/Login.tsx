@@ -63,6 +63,7 @@ function Login() {
   });
 
   const [open, setOpen] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -184,7 +185,7 @@ function Login() {
             onChange={handleInputChange}
           />
 
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-xl">
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <button
@@ -240,12 +241,37 @@ function Login() {
               </PopoverContent>
             </Popover>
           </div>
+
+          <div className="w-full flex items-start gap-2 mt-2">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm text-gray-600 cursor-pointer"
+            >
+              I agree to the{" "}
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary"
+              >
+                Terms and Conditions
+              </a>
+            </label>
+          </div>
         </section>
         <section className="w-full flex flex-row items-center justify-center">
           <Button
             isLoading={isSubmitting}
             type="submit"
             title={"Login"}
+            disabled={!termsAccepted}
           ></Button>
         </section>
       </form>

@@ -11,6 +11,8 @@ import { Separator } from "@/components/ui/separator";
 import InputField from "@/components/shared/InputField";
 import Button from "@/components/shared/Button";
 import { FaCity, FaFlagCheckered } from "react-icons/fa6";
+import axios from "axios";
+import { API_BASE_URL } from "@/config/apiDetails";
 
 interface DeliveryAddress {
   country: string;
@@ -55,26 +57,28 @@ function Checkout() {
 
     try {
       const orderData = {
-        items: cart.map((item) => ({
-          productId: item.product.productId,
-          quantity: item.quantity,
-          price: item.product.price,
-        })),
-        deliveryAddress: address,
-        totalAmount: getTotalPrice(),
+        // items: cart.map((item) => ({
+        //   productId: item.product.productId,
+        //   quantity: item.quantity,
+        //   price: item.product.price,
+        // })),
+        productId: cart[0].product.productId,
+        quantity: cart[0].quantity,
+        address: `${address.country}, ${address.province}, ${address.district}, ${address.address}`,
+        // totalAmount: getTotalPrice(),
         userId: user?.id,
         paymentMethod,
       };
 
       console.log("Order data:", orderData);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
       if (paymentMethod === "esewa") {
         toast.info("Redirecting to eSewa...");
         // TODO: Backend
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
+
+      const response = axios.post(`${API_BASE_URL}/products/order`, orderData);
+      console.log(response);
 
       toast.success("Order placed successfully!");
       clearCart();
