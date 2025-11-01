@@ -1,8 +1,9 @@
 import { useRef, useCallback } from "react";
 import axios from "axios";
+import type { VoiceApiResponse } from "@/config/apiDetails";
 
 interface VoiceRecorderOptions {
-  onTranscriptionComplete?: (text: string) => void;
+  onTranscriptionComplete?: (obj: VoiceApiResponse) => void;
   onError?: (error: Error) => void;
   apiEndpoint?: string;
 }

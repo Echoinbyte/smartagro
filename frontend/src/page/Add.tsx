@@ -19,11 +19,22 @@ import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 import Button from "@/components/shared/Button";
 import { GoNumber } from "react-icons/go";
 import { MdTextFields } from "react-icons/md";
+import { API_BASE_URL } from "@/config/apiDetails";
+import { useUser } from "@/context/UserContext";
+import axios from "axios";
 
 function Add() {
+  const { user } = useUser();
   const video = useRef<HTMLVideoElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [data, setData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    quantity: "",
+    expectedLifeSpan: "",
+  });
   const [isCaptured, setIsCaptured] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [speechModuleState, setSpeechModuleState] = useState<
@@ -32,13 +43,25 @@ function Add() {
   const { startRecording, stopRecording, isRecording } = useVoiceRecorder({
     onTranscriptionComplete: (result) => {
       console.log("Transcription Result:", result);
+      setData((prev) => ({
+        ...prev,
+        name: result.data.name.english || prev.name,
+        description: result.data.description || prev.description,
+        price:
+          result.data.price.value + " " + result.data.price.unit || prev.price,
+        quantity:
+          result.data.quantity.value + " " + result.data.quantity.unit ||
+          prev.quantity,
+        expectedLifeSpan:
+          result.data.expectedLifeSpan || prev.expectedLifeSpan,
+      }));
       setSpeechModuleState("completed");
     },
     onError: (error) => {
       console.error("Voice Recorder Error:", error);
       setSpeechModuleState("failed");
     },
-    apiEndpoint: "",
+    apiEndpoint: `${API_BASE_URL}/products/add-voice`,
   });
 
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
@@ -141,20 +164,34 @@ function Add() {
     );
   };
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const productData = {
-      name: formData.get("name") as string,
-      description: formData.get("description") as string,
-      price: formData.get("price") as string,
-      quantity: formData.get("quantity") as string,
-      image: capturedFile,
-    };
+    if (!capturedFile) {
+      console.error("Product image is required");
+      return;
+    }
 
-    // TODO: Backend integration
-    console.log("Product Data:", productData);
+    const formData = new FormData();
+    formData.append("productName", data.name);
+    formData.append("description", data.description);
+    formData.append("price", data.price);
+    formData.append("quantity", data.quantity);
+    formData.append("expectedLifeSpan", data.expectedLifeSpan);
+    formData.append("sellerId", user.id);
+    formData.append("picture", capturedFile);
+
+    const response = await axios.post(
+      `${API_BASE_URL}/products/add`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    console.log("Product Data:", response.data);
   };
 
   useEffect(() => {
@@ -302,6 +339,8 @@ function Add() {
                   Name
                 </label>
                 <InputField
+                  value={data.name}
+                  onChange={(e) => setData((prev) => ({ ...prev, name: e }))}
                   icon={<MdTextFields />}
                   placeholder="Name of the product"
                   name="name"
@@ -312,33 +351,43 @@ function Add() {
                   Description
                 </label>
                 <InputField
+                  value={data.description}
+                  onChange={(e) =>
+                    setData((prev) => ({ ...prev, description: e }))
+                  }
                   icon={<LucideText />}
                   placeholder="Description of the product"
                   name="description"
                 ></InputField>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col col-span-2 md:col-span-1">
                 <label className="text-sm font-medium text-foreground">
                   Price
                 </label>
                 <InputField
+                  value={data.price}
+                  onChange={(e) => setData((prev) => ({ ...prev, price: e }))}
                   icon={<FaIndianRupeeSign />}
                   placeholder="Price of the product"
                   name="price"
                 ></InputField>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col col-span-2 md:col-span-1">
                 <label className="text-sm font-medium text-foreground">
                   Quantity
                 </label>
                 <InputField
+                  value={data.quantity}
+                  onChange={(e) =>
+                    setData((prev) => ({ ...prev, quantity: e }))
+                  }
                   icon={<GoNumber />}
                   placeholder="Quantity of the product"
                   name="quantity"
                 ></InputField>
               </div>
 
-              <section className="flex flex-row items-center justify-end col-span-2">
+              <section className="flex flex-row items-center justify-center col-span-2 mt-4">
                 <Button type="submit" title="Create Product"></Button>
               </section>
             </form>
