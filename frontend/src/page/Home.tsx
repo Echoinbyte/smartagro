@@ -10,6 +10,7 @@ import type { UIProduct } from "@/types/Product";
 import axios from "axios";
 import { API_BASE_URL } from "@/config/apiDetails";
 import { products } from "@/config/mockProducts";
+import HomeBanner from "@/components/HomeBanner";
 
 function Home() {
   const navigate = useNavigate();
@@ -47,7 +48,8 @@ function Home() {
 
       <StarGrid />
 
-      <Bounded className="mb-16">
+      <Bounded className="!pt-0 mb-16">
+        <HomeBanner />
         <Products products={productLists}></Products>
       </Bounded>
       <BottomNavbar />

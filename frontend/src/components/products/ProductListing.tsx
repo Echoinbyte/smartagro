@@ -51,18 +51,22 @@ const ProductListing = ({ product, index }: productListingProps) => {
           <ImageSlider url={product.productImage} />
 
           <div className="flex flex-col w-full px-2 pb-4 rounded-b-xl bg-primary/5">
-            <h3 className="mt-4 font-medium text-lg text-gray-700 line-clamp-2 flex flex-row items-center justify-between">
+            <h3 className="mt-4 font-semibold text-xl text-gray-700 line-clamp-2 flex flex-row items-center justify-between">
               {product.productName}
             </h3>
-            <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+            <p className="mt-1 text-xs text-gray-500 line-clamp-2">
               {product.description}
             </p>
-            <p className="mt-1 font-medium text-sm text-gray-900 flex flex-col md:flex-row items-start md:items-center justify-between">
-              <span>
-                &#8377;{formatSmartValue(product.price)} -{" "}
-                {formatSmartValue(product.quantity)}
+            <p className="mt-1 text-sm text-gray-900 flex flex-col md:flex-row items-start md:items-center justify-between">
+              <span className="font-medium">
+                {formatSmartValue(product.price).includes("रू")
+                  ? formatSmartValue(product.price)
+                  : "रू. " + formatSmartValue(product.price)}
               </span>
-              <span>
+              <div className="font-medium">
+                उपलब्ध : {formatSmartValue(product.quantity)}
+              </div>
+              <span className="text-[10px] font-light mt-1">
                 {formatDistanceToNow(product.createdAt ?? new Date(), {
                   addSuffix: true,
                 })}
