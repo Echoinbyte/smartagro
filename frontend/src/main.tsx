@@ -13,6 +13,10 @@ import ColdStorage from "./page/ColdStorage";
 import IndividualProductListing from "./page/IndividualProductListing";
 import Checkout from "./page/Checkout";
 import Orders from "./page/Orders";
+import FarmerDashboard from "./page/FarmerDashboard";
+import AdminDashboard from "./page/AdminDashboard";
+import Layout from "./components/Layout";
+import FarmerSubsidiesPage from "./page/News";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,17 +33,87 @@ createRoot(document.getElementById("root")!).render(
             }
           />
           <Route path="login" element={<Login />} />
-          <Route path="home" element={<Home />} />
-          <Route path="orders" element={<Orders />} />
+          <Route
+            path="home"
+            element={
+              <Layout>
+                <Home />
+              </Layout>
+            }
+          />
+          <Route
+            path="orders"
+            element={
+              <Layout>
+                <Orders />
+              </Layout>
+            }
+          />
           <Route path="add" element={<Add />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="coldstorage" element={<ColdStorage />} />
-          <Route path="profile" element={<Profile />} />
+          <Route
+            path="checkout"
+            element={
+              <Layout>
+                <Checkout />
+              </Layout>
+            }
+          />
+          <Route
+            path="coldstorage"
+            element={
+              <Layout>
+                <ColdStorage />
+              </Layout>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <Layout>
+                <Profile />
+              </Layout>
+            }
+          />
+          <Route
+            path="news"
+            element={
+              <Layout>
+                <FarmerSubsidiesPage />
+              </Layout>
+            }
+          />
+          <Route
+            path="farmer-dashboard"
+            element={
+              <Layout>
+                <FarmerDashboard />
+              </Layout>
+            }
+          />
+          <Route
+            path="admin-dashboard"
+            element={
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            }
+          />
           <Route
             path="product/:productId"
-            element={<IndividualProductListing />}
+            element={
+              <Layout>
+                <IndividualProductListing />
+              </Layout>
+            }
           />
-          <Route path="*" element={<NoPage />} />
+          <Route
+            path="*"
+            element={
+              <Layout>
+                <NoPage />
+              </Layout>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </ProviderWrapper>

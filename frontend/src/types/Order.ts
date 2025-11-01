@@ -17,7 +17,13 @@ export interface Order {
   quantity: number;
   Product: OrderItem;
   PaymentMethod: "cod" | "esewa";
-  orderStatus: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  orderStatus:
+    | "ordered"
+    | "pending"
+    | "confirmed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
 }
 
 export interface FarmerOrder {
@@ -26,8 +32,15 @@ export interface FarmerOrder {
   productName: string;
   quantity: number;
   price: number | string;
-  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  status:
+    | "ordered"
+    | "pending"
+    | "confirmed"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
   customerContact: string;
+  paymentMethod: "cod" | "esewa";
   orderDate: string;
   deliveryAddress: string;
 }
