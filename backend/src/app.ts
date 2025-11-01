@@ -15,11 +15,9 @@ app.use(
 const ApiVersion = "/api/v1";
 import userRouter from "./router/user.route";
 import productRouter from "./router/products.route";
-import addressRoute from "./router/address.route";
 
 // router declaration
 app.use(`${ApiVersion}/users`, userRouter);
 app.use(`${ApiVersion}/products`, productRouter);
-app.use(`${ApiVersion}/address`, addressRoute);
 
 export default app;

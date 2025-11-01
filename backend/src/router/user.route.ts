@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { createUser, verifyFarmerKYC } from "../controller/user.controller";
+import {
+  createUser,
+  getFarmerProducts,
+  getOrders,
+  verifyFarmerKYC,
+} from "../controller/user.controller";
 import { upload } from "../Middleware/Multer";
 const router = Router();
 
-router.route("/create").post( createUser);
+router.route("/create").post(createUser);
 router.route("/verify").post(
   upload.fields([
     {
@@ -17,5 +22,7 @@ router.route("/verify").post(
   ]),
   verifyFarmerKYC
 );
+router.route("/getorders/:userId").get(getOrders);
+router.route("/getFarmerSoldProducts/:farmerId").get(getFarmerProducts);
 
 export default router;
