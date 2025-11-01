@@ -2,13 +2,29 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import ImageSlider from "./ImageSlider";
 import { Skeleton } from "../ui/skeleton";
-import type { Product } from "@/types/Product";
+import type { UIProduct } from "@/types/Product";
 import { formatDistanceToNow } from "date-fns";
 
 interface productListingProps {
-  product: Product | null;
+  product: UIProduct | null;
   index: number;
 }
+
+const formatSmartValue = (value: string | number): string => {
+  if (value == null) return "N/A";
+
+  const str = String(value).trim();
+
+  if (/[a-zA-Z₹$€£/]/.test(str)) {
+    return str.replace(/\s+/g, " ");
+  }
+
+  const num = parseFloat(str);
+  if (isNaN(num)) return str;
+
+  const formatted = num.toFixed(2).replace(/\.?0+$/, "");
+  return formatted;
+};
 
 const ProductListing = ({ product, index }: productListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -29,24 +45,25 @@ const ProductListing = ({ product, index }: productListingProps) => {
         className={cn("invisible h-full w-full cursor-pointer group/main", {
           "visible animate-in fade-in-5": isVisible,
         })}
-        href={`/product/${product.id}`}
+        href={`/product/${product.productId}`}
       >
         <div className="flex flex-col w-full">
-          <ImageSlider url={product.imageUrl} />
+          <ImageSlider url={product.productImage} />
 
           <div className="flex flex-col w-full px-2 pb-4 rounded-b-xl bg-primary/5">
             <h3 className="mt-4 font-medium text-lg text-gray-700 line-clamp-2 flex flex-row items-center justify-between">
-              {product.name.english}
+              {product.productName}
             </h3>
             <p className="mt-1 text-sm text-gray-500 line-clamp-2">
               {product.description}
             </p>
             <p className="mt-1 font-medium text-sm text-gray-900 flex flex-col md:flex-row items-start md:items-center justify-between">
               <span>
-                ${product.price} - {product.quantity} pcs
+                &#8377;{formatSmartValue(product.price)} -{" "}
+                {formatSmartValue(product.quantity)}
               </span>
               <span>
-                {formatDistanceToNow(product.createdAt, {
+                {formatDistanceToNow(product.createdAt ?? new Date(), {
                   addSuffix: true,
                 })}
               </span>

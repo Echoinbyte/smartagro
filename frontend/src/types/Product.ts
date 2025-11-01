@@ -13,3 +13,14 @@ export interface Product {
   createdAt: string;
   expectedLifeSpan: number;
 }
+
+export interface UIProduct {
+  productId: string;
+  productName: string;
+  description: string;
+  productImage: string;
+  price: string;
+  quantity: string;
+  createdAt: string;
+  expectedLifeSpan: string;
+}

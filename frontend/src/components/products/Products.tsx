@@ -1,7 +1,7 @@
-import type { Product } from "@/types/Product";
+import type { UIProduct } from "@/types/Product";
 import ProductListing from "./ProductListing";
 
-const Products = ({ products }: { products?: Product[] }) => {
+const Products = ({ products }: { products?: UIProduct[] }) => {
   return (
     <div className="relative">
       <div className="mt-6 flex items-center w-full">
