@@ -6,22 +6,27 @@ import StarGrid from "./landing/StarGrid";
 import { useUser } from "@/context/UserContext";
 import { formatSmartValue } from "@/lib/formatSmartValue";
 import { Package, ChevronRight } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { mockOrders } from "@/config/mockOrders";
 import type { Order } from "@/types/Order";
+import Loader from "@/components/shared/Loader";
+import axios from "axios";
+import { API_BASE_URL } from "@/config/apiDetails";
+import Button from "@/components/shared/Button";
 
 function Orders() {
   const navigate = useNavigate();
   const { user } = useUser();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchOrders = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        setOrders(mockOrders);
+        const userOrders = await axios.get(
+          `${API_BASE_URL}/users/getorders/${user.id}`
+        );
+        console.log("Fetched orders:", userOrders.data.data);
+        setOrders(userOrders.data.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
         toast.error("Failed to fetch orders");
@@ -31,9 +36,9 @@ function Orders() {
     };
 
     fetchOrders();
-  }, [user, navigate]);
+  }, [user.id]);
 
-  const getStatusColor = (status: Order["status"]) => {
+  const getStatusColor = (status: Order["orderStatus"]) => {
     switch (status) {
       case "delivered":
         return "text-green-600";
@@ -48,7 +53,7 @@ function Orders() {
     }
   };
 
-  const getStatusText = (status: Order["status"]) => {
+  const getStatusText = (status: Order["orderStatus"]) => {
     switch (status) {
       case "delivered":
         return "Delivered";
@@ -63,15 +68,19 @@ function Orders() {
     }
   };
 
+  const calculateOrderTotal = (order: Order) => {
+    const price =
+      typeof order.Product.price === "string"
+        ? parseFloat(order.Product.price)
+        : order.Product.price;
+    return price * order.quantity;
+  };
+
   if (isLoading) {
     return (
-      <Bounded className="min-h-screen">
+      <Bounded className="pt-0!">
         <StarGrid />
-        <div className="h-full w-full flex items-center justify-center py-20">
-          <div className="text-center">
-            <p className="mt-4 text-gray-600">Loading orders...</p>
-          </div>
-        </div>
+        <Loader></Loader>
       </Bounded>
     );
   }
@@ -89,12 +98,11 @@ function Orders() {
             You haven't placed any orders yet. Start shopping to see your orders
             here.
           </p>
-          <button
+          <Button
+            title="Start Shopping"
             onClick={() => navigate("/home")}
-            className="mt-6 px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
-          >
-            Start Shopping
-          </button>
+            containerClass="mt-6 px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          ></Button>
         </div>
       </Bounded>
     );
@@ -124,54 +132,44 @@ function Orders() {
                     <p className="text-xs text-gray-500">
                       Order #{order.orderId.slice(0, 12)}
                     </p>
-                    <p className="text-xs text-gray-500">
-                      Placed{" "}
-                      {formatDistanceToNow(new Date(order.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
+                    <p className="text-xs text-gray-500">Placed recently</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-sm font-medium ${getStatusColor(
-                        order.status
+                        order.orderStatus
                       )}`}
                     >
-                      &middot; {getStatusText(order.status)}
+                      &middot; {getStatusText(order.orderStatus)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="divide-y divide-gray-100">
-                {order.items.map((item, index) => (
-                  <div
-                    key={`${item.productId}-${index}`}
-                    className="p-4 flex gap-4 hover:bg-gray-50 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/product/${item.productId}`)}
-                  >
-                    <img
-                      src={item.productImage}
-                      alt={item.productName}
-                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 text-sm sm:text-base line-clamp-2">
-                        {item.productName}
-                      </h3>
-                      <div className="mt-1 flex items-center gap-3 text-sm text-gray-600">
-                        <span>Qty: {item.quantity}</span>
-                        <span>&middot;</span>
-                        <span className="font-medium">
-                          {formatSmartValue(item.price).includes("रू")
-                            ? formatSmartValue(item.price)
-                            : "रू. " + formatSmartValue(item.price)}
-                        </span>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 shrink-0 self-center" />
+              <div
+                className="p-4 flex gap-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                onClick={() => navigate(`/product/${order.productId}`)}
+              >
+                <img
+                  src={order.Product.productImage}
+                  alt={order.Product.productName}
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-gray-900 text-sm sm:text-base line-clamp-2">
+                    {order.Product.productName}
+                  </h3>
+                  <div className="mt-1 flex items-center gap-3 text-sm text-gray-600">
+                    <span>Qty: {order.quantity}</span>
+                    <span>&middot;</span>
+                    <span className="font-medium">
+                      {formatSmartValue(order.Product.price).includes("रू")
+                        ? formatSmartValue(order.Product.price)
+                        : "रू. " + formatSmartValue(order.Product.price)}
+                    </span>
                   </div>
-                ))}
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-400 shrink-0 self-center" />
               </div>
 
               <div className="p-4 bg-gray-50 border-t border-gray-200">
@@ -179,19 +177,18 @@ function Orders() {
                   <div className="flex flex-col gap-1">
                     <p className="text-xs text-gray-600">
                       Payment:{" "}
-                      {order.paymentMethod === "cod"
+                      {order.PaymentMethod === "cod"
                         ? "Cash on Delivery"
                         : "eSewa"}
                     </p>
                     <p className="text-xs text-gray-600 line-clamp-1">
-                      {order.deliveryAddress.address},{" "}
-                      {order.deliveryAddress.district}
+                      {order.address}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">Total:</span>
                     <span className="text-lg font-semibold text-gray-900">
-                      रू. {formatSmartValue(order.totalAmount)}
+                      रू. {formatSmartValue(calculateOrderTotal(order))}
                     </span>
                   </div>
                 </div>

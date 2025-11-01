@@ -12,17 +12,21 @@ import { formatSmartValue } from "@/lib/formatSmartValue";
 import StarGrid from "./landing/StarGrid";
 import Button from "@/components/shared/Button";
 import { FaLocationDot } from "react-icons/fa6";
+import { useCart } from "@/hooks/useCart";
+import Loader from "@/components/shared/Loader";
 
 function IndividualProductListing() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
   const [productItem, setProductItem] = useState<IndividualProduct>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [UiState, setUiState] = useState<"detail" | "checkout">("detail");
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(
           `${API_BASE_URL}/products/getproduct/${location.pathname.replace(
@@ -40,6 +44,8 @@ function IndividualProductListing() {
       } catch (error: unknown) {
         console.error("Error fetching products:", error);
         toast.error("An error occurred while fetching products.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -52,20 +58,35 @@ function IndividualProductListing() {
     return null;
   }
 
-  const handleBuyNow = () => {
-    setIsLoading(true);
+  const handleAddToCart = () => {
+    if (!productItem) return;
 
+    setIsSubmitting(true);
     try {
-      setUiState("checkout");
+      addToCart(productItem, 1);
+      toast.success("Item added to cart!");
     } catch (error) {
-      console.error("Error during Buy Now:", error);
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  if (UiState === "checkout") {
-    return <></>;
+  const handleCheckout = () => {
+    if (!productItem) return;
+
+    addToCart(productItem, 1);
+    navigate("/checkout");
+  };
+
+  if (isLoading) {
+    return (
+      <Bounded className="pt-0!">
+        <StarGrid />
+        <Loader></Loader>
+      </Bounded>
+    );
   }
 
   return (
@@ -104,12 +125,21 @@ function IndividualProductListing() {
               उपलब्ध : {formatSmartValue(productItem?.quantity || "")}
             </span>
             <Separator />
-            <Button
-              isLoading={isLoading}
-              onClick={handleBuyNow}
-              containerClass="my-4"
-              title="Buy Now"
-            ></Button>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Button
+                isLoading={isSubmitting}
+                onClick={handleAddToCart}
+                containerClass="w-full sm:flex-1"
+                title="Add to Cart"
+                variant="secondary"
+              />
+              <Button
+                onClick={handleCheckout}
+                containerClass="w-full sm:flex-1"
+                title="Checkout"
+              />
+            </div>
           </div>
         </main>
       </Bounded>

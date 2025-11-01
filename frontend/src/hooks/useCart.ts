@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { IndividualProduct } from "@/types/Product";
+import { extractNumericValue } from "@/lib/formatSmartValue";
 
 export interface CartItem {
   product: IndividualProduct;
@@ -70,10 +71,7 @@ export const useCart = (): UseCartReturn => {
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => {
-      const price =
-        typeof item.product.price === "string"
-          ? parseFloat(item.product.price)
-          : item.product.price;
+      const price = extractNumericValue(item.product.price) || 0;
       return total + price * item.quantity;
     }, 0);
   };

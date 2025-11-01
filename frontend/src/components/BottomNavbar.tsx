@@ -9,11 +9,22 @@ import {
 } from "@/components/ui/popover";
 import { Orb } from "./ui/orb";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
+import { useUser } from "@/context/UserContext";
 
 function BottomNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { startRecording, stopRecording, isRecording } = useVoiceRecorder();
+  const { user } = useUser();
+  // TODO: Integrate Voice Navigation / Product Searching / Commands
+  const { startRecording, stopRecording, isRecording } = useVoiceRecorder({
+    apiEndpoint: "",
+    onTranscriptionComplete: (transcript) => {
+      console.log("Transcription complete:", transcript);
+    },
+    onError: (error) => {
+      console.error("Recording error:", error);
+    },
+  });
   const [isSpeechActive, setIsSpeechActive] = useState(false);
 
   const handleSpeechToggle = () => {
@@ -30,7 +41,16 @@ function BottomNavbar() {
   const navItems = [
     { icon: Home, label: "Home", path: "/home" },
     { icon: ShoppingBag, label: "Orders", path: "/orders" },
-    { icon: Plus, label: "Add", path: "/add", isSpecial: true },
+    ...(user.identity === "farmer"
+      ? [
+          {
+            icon: Plus,
+            label: "Add",
+            path: "/add",
+            isSpecial: true,
+          },
+        ]
+      : []),
     { icon: User, label: "Profile", path: "/profile" },
     { icon: Mic, label: "Speech", action: handleSpeechToggle },
   ];
