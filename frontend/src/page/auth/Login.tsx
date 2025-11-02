@@ -202,7 +202,7 @@ function Login() {
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="center">
+              <PopoverContent className="w-full p-0" align="center" side="top">
                 <Command>
                   <CommandInput placeholder="Search identity..." />
                   <CommandList>
@@ -242,27 +242,23 @@ function Login() {
             </Popover>
           </div>
 
-          <div className="w-full flex items-start gap-2 mt-2">
+          <div
+            className="w-full flex items-start gap-2 mt-2 cursor-pointer"
+            onClick={() => setTermsAccepted(!termsAccepted)}
+          >
             <input
               type="checkbox"
               id="terms"
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+              className="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer pointer-events-none"
             />
             <label
               htmlFor="terms"
               className="text-sm text-gray-600 cursor-pointer"
             >
               I agree to the{" "}
-              <a
-                href="/terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary"
-              >
-                Terms and Conditions
-              </a>
+              <span className="text-primary">Terms and Conditions</span>
             </label>
           </div>
         </section>
