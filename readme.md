@@ -1,113 +1,130 @@
-# 🌾 **TetraMan – AI-Powered Agri-Commerce Platform**
+# SmartAgro
 
-presentation drive link : 
+A voice-powered agricultural marketplace platform connecting farmers directly with consumers, eliminating middlemen and ensuring fair pricing for all parties.
 
-> Empowering Nepali farmers through **AI voice recognition**, **smart product enhancement**, and a seamless **digital marketplace**.
+## Problem Statement
 
----
+The current agricultural supply chain presents significant challenges:
 
-## 🧭 **Overview**
+- Farmers sell crops at extremely low prices to middlemen
+- Middlemen drastically increase prices before products reach consumers
+- Off-season pricing becomes prohibitively expensive for consumers
+- Farmers lack technical expertise to leverage e-commerce platforms
+- Traditional market structures disadvantage both farmers and end users
 
-**TetraMan** is a full-stack, AI-driven agri-commerce platform built for Nepali farmers.  
-It enables farmers to **list agricultural products using voice input in Nepali**, which is automatically **transcribed, enhanced, and structured** using **Google Gemini AI**.  
-Buyers can browse, purchase, and manage products while the system bridges the gap between **local farmers and consumers** through technology.
+## Solution
 
-This project was developed for a **Hackathon submission**, showcasing innovation at the intersection of **AI, accessibility, and agriculture**.
+SmartAgro is an AI voice-powered platform that enables farmers to list their products in three simple clicks and monitor sales effectively. Users can purchase agricultural products at rates lower than market prices while ensuring farmers receive fair compensation.
 
----
+### Core Features
 
-## 📚 **Table of Contents**
+**For Farmers:**
+- Voice-powered product listing interface
+- Simple three-click product upload process
+- Real-time sales monitoring dashboard
+- Direct connection to consumers without intermediaries
 
-1. [Features](#-features)
-2. [System Architecture](#-system-architecture)
-3. [Tech Stack](#-tech-stack)
-4. [Project Structure](#-project-structure)
-5. [Installation & Setup](#-installation--setup)
-6. [API Overview](#-api-overview)
-7. [Usage Flow](#-usage-flow)
-8. [Future Roadmap](#-future-roadmap)
-9. [Contributors](#-contributors)
-10. [License](#-license)
+**For Consumers:**
+- Access to fresh agricultural products at competitive prices
+- Direct purchase from verified farmers
+- Transparent pricing and product information
+- Location-based product availability
 
----
+**Verification System:**
+- Citizenship document verification for farmer accounts
+- Phone number-based authentication
+- Immutable farmer location tracking to prevent false origin claims
+- Product verification through photo uploads and admin approval
 
-## 🚀 **Features**
+**Cold Storage Mapping:**
+- Interactive map showing nearby cold storage facilities
+- Detailed information about storage capacity and availability
+- Strategic logistics planning support
 
-### 👨‍🌾 For Farmers
+## Future Development
 
-- 🎙️ **Voice-to-Product Creation** — Farmers record their product info in Nepali.  
-  → AI converts it to text and extracts name, price, quantity, lifespan, and description.
-- 🧠 **AI Enhancement via Gemini** — Automatically generates structured and enhanced product details in Nepali.
-- 📷 **Product Image Uploads** — Store photos securely using **Cloudinary**.
-- 🪪 **KYC Verification** — Farmers upload citizenship front/back for verification.
+### 1. Dynamic Pricing Algorithm
 
-### 🛒 For Buyers
+An AI-powered pricing system that analyzes:
+- Order frequency patterns across regions
+- Seasonal demand fluctuations
+- Product freshness based on expected lifespan
+- Market hotspots and consumer behavior
 
-- 🔍 **Search Products** — Browse and filter by product name.
-- 💳 **Order & Checkout** — Purchase items via Cash on Delivery or eSewa.
-- 📦 **Order Management** — View and track all your orders in one dashboard.
+This system will automatically adjust prices to optimize sales while maintaining profitability for farmers and affordability for consumers.
 
-### ⚙️ Admin & Utility
+### 2. Intelligent Logistics Management
 
-- 🧾 **Farmer Dashboard** — View, verify, and manage farmer data and KYC status.
-- 🧱 **Cold Storage & Inventory Tracking** — Manage perishable product lifecycle.
+AI-driven logistics system handling:
+- Optimal delivery route calculation
+- Cold storage allocation and management
+- Automated shipping coordination
+- Seasonal product preservation strategies
 
----
+The system will enable storing seasonal products for off-season sales, generating significant profits while maintaining prices 50-200% lower than average retail markets.
 
-## 🧩 **System Architecture**
+### 3. Community Forum
 
-Frontend (React + Vite + Tailwind)
+A knowledge-sharing platform featuring:
+- Question and answer system for agricultural queries
+- AI-powered assistance for common farming issues
+- Human expert consultation for complex problems
+- Agricultural subsidy news and updates
+- Government scheme notifications
+
+**Current Progress:** News section implemented, displaying information about agricultural subsidies available to farmers.
+
+## Technology Stack
+
+### Frontend
+- React
+- Shadcn UI Component Library
+- GSAP (Animation)
+- Framer Motion (Animation)
+- Maplibre GL (Mapping)
+- Swiper (Carousel)
+
+### Backend
+- Node.js
+- Express
+- PostgreSQL (Database)
+- Prisma (ORM)
+
+### AI Integration
+- ElevenLabs (Voice Interface)
+- Google Gemini (AI Processing)
+
+## Project Structure
+
+```
+TetraMan/
+├── backend/          # Server-side application
+│   ├── prisma/
+│   ├── src/
+│   ├── package.json
+│   └── ...etc
 │
-▼
-Backend (Express + Prisma + Node.js)
-│
-├── Gemini AI (Text Enhancement)
-├── ElevenLabs (Speech-to-Text)
-├── Cloudinary (Image Upload)
-└── PostgreSQL (via Prisma ORM)
+└── frontend/         # Client-side application
+    ├── src/
+    ├── public/
+    ├── package.json
+    └── ...etc
+```
 
----
+## Team
 
-## 🛠️ **Tech Stack**
+This project was developed during a 48-hour hackathon with the theme "Smart Agriculture".
 
-**Frontend**
+- **Sambhav Aryal** - Frontend Development
+- **Rijan Dhakal** - Backend Development
+- **Pratish Subedi** - Research
+- **Pujan Pandey** - Assets and Design
 
-- ⚛️ React 19 + Vite
-- 🎨 TailwindCSS 4
-- 🧭 React Router 7
-- 🧩 Radix UI components
-- 📦 Axios for API integration
-- 🌍 Maplibre for geo-location features
+## Links
 
-**Backend**
+- Presentation: []
+- Live Website: []
 
-- 🟢 Node.js + Express
-- 🧠 Google Gemini AI API
-- 🗣️ ElevenLabs Speech-to-Text API
-- 🧱 Prisma ORM + PostgreSQL
-- ☁️ Cloudinary for image uploads
-- 🔒 Geoapify API for reverse geocoding
+## Development Context
 
----
-# env 
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/tetraman"
-GEMINI_API="your_google_gemini_api_key"
-EllevenLabs_API_KEy="your_elevenlabs_api_key"
-CLOUDINARY_API_KEY="your_cloudinary_key"
-CLOUDINARY_API_SECRET="your_cloudinary_secret"
-CLOUDINARY_CLOUD_NAME="your_cloud_name"
-
-| Method | Endpoint                      | Description                        |
-| ------ | ----------------------------- | ---------------------------------- |
-| `POST` | `/api/product/add-voice`      | Create a product from voice input  |
-| `POST` | `/api/product/add`            | Create product manually            |
-| `GET`  | `/api/product/get`            | Get all products                   |
-| `GET`  | `/api/product/getproduct/:id` | Get product by ID                  |
-| `POST` | `/api/product/order`          | Place an order                     |
-| `GET`  | `/api/product/search`         | Search product by name             |
-| `POST` | `/api/user/create`            | Register farmer or user            |
-| `POST` | `/api/user/verify`            | Upload KYC for farmer verification |
-| `GET`  | `/api/user/getorders/:userId` | Fetch user’s orders                |
-| `GET`  | `/api/user/getFarmers`        | Fetch all registered farmers       |
-
-
+Developed as part of a 48-hour closed-theme hackathon focused on Smart Agriculture solutions. The project aims to address critical inefficiencies in the agricultural supply chain through technology-driven innovation.
