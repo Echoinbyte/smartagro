@@ -416,6 +416,7 @@ const getNearestProducts = asyncHandeler(async (req, res) => {
       products: true,
     },
   });
+
   const parseCoord = (v: string | number | null | undefined): number =>
     typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : NaN;
 
