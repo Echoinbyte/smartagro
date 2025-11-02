@@ -122,7 +122,7 @@ This project was developed during a 48-hour hackathon with the theme "Smart Agri
 
 ## Links
 
-- Presentation: []
+- Presentation: [PPT](https://www.canva.com/design/DAG3Wrvb6l4/UoUrO-JtxU2Kw-A0hXf_Dg/edit)
 - Live Website: []
 
 ## Development Context

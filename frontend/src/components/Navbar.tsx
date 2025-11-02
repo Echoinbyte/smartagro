@@ -21,7 +21,9 @@ function Navbar() {
           onClick={() => navigate("/home")}
         >
           <ShoppingBasket className="w-6 h-6 text-primary" />
-          <span className="text-lg font-semibold text-gray-900">SmartAgro</span>
+          <span className="text-lg font-semibold text-gray-900 sr-only sm:not-sr-only">
+            SmartAgro
+          </span>
         </div>
 
         <nav className="flex flex-row items-center gap-6">

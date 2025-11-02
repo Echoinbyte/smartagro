@@ -1,9 +1,11 @@
 import clsx from "clsx";
+import type { ReactNode, ElementType } from "react";
 
 type BoundedProps = {
-  as?: React.ElementType;
+  as?: ElementType;
   className?: string;
-  children: React.ReactNode;
+  children: ReactNode;
+  [key: string]: unknown;
 };
 
 export default function Bounded({
