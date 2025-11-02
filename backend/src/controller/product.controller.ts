@@ -309,16 +309,7 @@ const buyProduct = asyncHandeler(
           orderStatus: "ORDERED",
           quantity: quantity,
           address: address,
-          Product: {
-            connect: {
-              productId: productId,
-            },
-          },
-          user: {
-            connect: {
-              userId: userId,
-            },
-          },
+          productId: productId,
         },
         include: {
           Product: true,
@@ -347,10 +338,120 @@ const buyProduct = asyncHandeler(
   }
 );
 
+const searchProduct = asyncHandeler(async (req: Request, res) => {
+  const { search } = req.query as { search?: string };
+  if (!search) return;
+  const fetchedProducts = await prisma.product.findMany({
+    where: {
+      OR: [
+        {
+          productName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ],
+    },
+  });
+  return res.status(200).json(
+    new APIresponse({
+      data: fetchedProducts,
+      message: "product searched",
+      statusCode: 200,
+    })
+  );
+});
+
+// haversine formula
+function getDistanceFromLatLonInKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+const getNearestProducts = asyncHandeler(async (req, res) => {
+  const { userId } = req.params;
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+  } catch (error) {
+    user = await prisma.farmer.findUnique({
+      where: {
+        farmerID: userId,
+      },
+    });
+  }
+  if (!user) return;
+  const userLat =
+    typeof user?.latitude === "string"
+      ? parseFloat(user.latitude)
+      : typeof user?.latitude === "number"
+      ? user.latitude
+      : NaN;
+  const userLng =
+    typeof user?.longitude === "string"
+      ? parseFloat(user.longitude)
+      : typeof user?.longitude === "number"
+      ? user.longitude
+      : NaN;
+  const farmers = await prisma.farmer.findMany({
+    include: {
+      products: true,
+    },
+  });
+  const parseCoord = (v: string | number | null | undefined): number =>
+    typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : NaN;
+
+  const nearbyFarmers = farmers
+    .map((f) => {
+      const distance = getDistanceFromLatLonInKm(
+        userLat,
+        userLng,
+        parseCoord(f.latitude),
+        parseCoord(f.longitude)
+      );
+      return { ...f, distance };
+    })
+    .filter((f) => f.distance <= 10) // only within 10 km
+    .sort((a, b) => a.distance - b.distance); // nearest first
+  const products: any = [];
+  nearbyFarmers.forEach((farmer) => {
+    if (farmer.products.length !== 0) {
+      products.push(farmer.products);
+    }
+  });
+  return res.status(200).json(
+    new APIresponse({
+      statusCode: 200,
+      data: products,
+      message: "nearby products fetched",
+    })
+  );
+});
+
 export {
   createProduct,
   createProductFromVoice,
   getProducts,
   buyProduct,
   getProduct,
+  searchProduct,
+  getNearestProducts,
 };

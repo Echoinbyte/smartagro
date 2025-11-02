@@ -44,7 +44,6 @@ function Home() {
   return (
     <main>
       <StarGrid />
-
       <Bounded className="pt-0! mb-16">
         <HomeBanner />
         <Products products={productLists}></Products>

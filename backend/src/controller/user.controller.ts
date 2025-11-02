@@ -55,6 +55,8 @@ const createUser = asyncHandeler(
           username: username,
           contact: Contact,
           gmail: gmail,
+          latitude: latitude === undefined ? undefined : Number(latitude),
+          longitude: longitude === undefined ? undefined : Number(longitude),
         },
       });
       if (!createUser) {
@@ -113,15 +115,19 @@ const createUser = asyncHandeler(
             contact: Contact,
             gmail,
             address: fetched_address,
+            latitude: latitude === undefined ? undefined : Number(latitude),
+            longitude: longitude === undefined ? undefined : Number(longitude),
           },
         });
         await prisma.user.create({
-          data:{
-            userId : createFarmer.farmerID,
-            contact : createFarmer.contact,
-            username : createFarmer.username
-          }
-        })
+          data: {
+            userId: createFarmer.farmerID,
+            contact: createFarmer.contact,
+            username: createFarmer.username,
+            latitude: latitude === undefined ? undefined : Number(latitude),
+            longitude: longitude === undefined ? undefined : Number(longitude),
+          },
+        });
         return res.status(200).json(
           new APIresponse({
             statusCode: 200,
@@ -210,37 +216,53 @@ const getOrders = asyncHandeler(async (req, res) => {
 
 const getFarmerProducts = asyncHandeler(async (req, res) => {
   const { farmerId } = req.params;
-  if(!farmerId){
+  if (!farmerId) {
     throw new Errorhandler({
-      statusCode : 404 , 
-      message : "Farmer id not found"
-    })
+      statusCode: 404,
+      message: "Farmer id not found",
+    });
   }
   const farmersOldProducts = await prisma.farmer.findUnique({
     where: {
       farmerID: farmerId,
     },
-    include : {
-      products : {
-        include : {
-          order : {
-            include : {
-              Product : true , 
-              user : true
-            }
-          }
-        }
-      }
-    }
+    include: {
+      products: {
+        include: {
+          order: {
+            include: {
+              Product: true,
+              user: true,
+            },
+          },
+        },
+      },
+    },
   });
-  return res.status(200)
-  .json(
+  return res.status(200).json(
     new APIresponse({
-      data : farmersOldProducts, 
-      statusCode : 200 , 
-      message : "Farmers sold items fetched sucessfully !"
+      data: farmersOldProducts,
+      statusCode: 200,
+      message: "Farmers sold items fetched sucessfully !",
     })
-  )
+  );
 });
 
-export { createUser, verifyFarmerKYC, getOrders , getFarmerProducts };
+const getFarmers = asyncHandeler(async (req, res) => {
+  const farmers = await prisma.farmer.findMany();
+  return res.status(200).json(
+    new APIresponse({
+      data: farmers,
+      statusCode: 200,
+      message: "User fetched !",
+    })
+  );
+});
+
+export {
+  createUser,
+  verifyFarmerKYC,
+  getOrders,
+  getFarmerProducts,
+  getFarmers,
+};

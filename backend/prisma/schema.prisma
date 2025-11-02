@@ -21,11 +21,13 @@ enum OrderStatus {
 }
 
 model user {
-  userId   String  @id @default(uuid())
-  username String
-  contact  String  @unique
-  gmail    String?
-  order    order[]
+  userId    String  @id @default(uuid())
+  username  String
+  contact   String  @unique
+  gmail     String?
+  order     order[]
+  longitude Float?
+  latitude  Float?
 }
 
 model farmer {
@@ -38,6 +40,8 @@ model farmer {
   citizenShip_front String?
   citizenShip_back  String?
   products          product[]
+  longitude         Float?
+  latitude          Float?
 }
 
 model product {

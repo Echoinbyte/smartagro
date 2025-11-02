@@ -16,7 +16,7 @@ import Orders from "./page/Orders";
 import FarmerDashboard from "./page/FarmerDashboard";
 import AdminDashboard from "./page/AdminDashboard";
 import Layout from "./components/Layout";
-import FarmerSubsidiesPage from "./page/News";
+// import FarmerSubsidiesPage from "./page/News";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -74,14 +74,14 @@ createRoot(document.getElementById("root")!).render(
               </Layout>
             }
           />
-          <Route
+          {/* <Route
             path="news"
             element={
               <Layout>
                 <FarmerSubsidiesPage />
               </Layout>
             }
-          />
+          /> */}
           <Route
             path="farmer-dashboard"
             element={

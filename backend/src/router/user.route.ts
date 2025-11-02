@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createUser,
   getFarmerProducts,
+  getFarmers,
   getOrders,
   verifyFarmerKYC,
 } from "../controller/user.controller";
@@ -24,5 +25,6 @@ router.route("/verify").post(
 );
 router.route("/getorders/:userId").get(getOrders);
 router.route("/getFarmerSoldProducts/:farmerId").get(getFarmerProducts);
+router.route("/getFarmers").get(getFarmers);
 
 export default router;

@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@/config/apiDetails";
 import { products } from "@/config/mockProducts";
-import { useUser } from "@/context/UserContext";
+// import { useUser } from "@/context/UserContext";
 import type { IndividualProduct } from "@/types/Product";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ import Loader from "@/components/shared/Loader";
 function IndividualProductListing() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser();
+  // const { user } = useUser();
   const [productItem, setProductItem] = useState<IndividualProduct>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,11 +52,11 @@ function IndividualProductListing() {
     fetchProducts();
   }, [location.pathname]);
 
-  if (!user || !user.username) {
-    navigate("/login");
-    toast.error("Please log in to access the home page.");
-    return null;
-  }
+  // if (!user || !user.username) {
+  //   navigate("/login");
+  //   toast.error("Please log in to access the home page.");
+  //   return null;
+  // }
 
   const handleAddToCart = () => {
     if (!productItem) return;

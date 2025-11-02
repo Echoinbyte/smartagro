@@ -26,7 +26,6 @@ export const useVoiceRecorder = ({
     async (blob: Blob): Promise<string | null> => {
       const formData = new FormData();
       formData.append("audio", blob, "recording.webm");
-
       try {
         const response = await axios.post(apiEndpoint, formData, {
           headers: {
