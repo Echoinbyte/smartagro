@@ -64,7 +64,7 @@ function Checkout() {
         // })),
         productId: cart[0].product.productId,
         quantity: cart[0].quantity,
-        address: `${address.country}, ${address.province}, ${address.district}, ${address.address}`,
+        address: `${address.address}, ${address.district}, ${address.province}, ${address.country}`,
         // totalAmount: getTotalPrice(),
         userId: user?.id,
         paymentMethod,
