@@ -5,7 +5,7 @@ import { useGSAP } from "@gsap/react";
 import StarGrid from "./StarGrid";
 import usePrefersReducedMotion from "@/hooks/usePrefersReducedMotion";
 import Button from "@/components/shared/Button";
-import Image from "../../assets/SmartAgri.png";
+import Image from "../../assets/SmartAgro.png";
 
 export default function AnimatedContent() {
   const container = useRef(null);
