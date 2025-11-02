@@ -18,7 +18,7 @@ function Navbar() {
       <header className="w-full px-6 py-4 flex flex-row items-center justify-between bg-white border-b border-gray-200">
         <div
           className="flex flex-row items-center gap-2 cursor-pointer"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/home")}
         >
           <ShoppingBasket className="w-6 h-6 text-primary" />
           <span className="text-lg font-semibold text-gray-900">SmartAgro</span>

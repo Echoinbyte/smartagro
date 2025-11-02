@@ -10,6 +10,7 @@ import axios from "axios";
 import { API_BASE_URL } from "@/config/apiDetails";
 import { products } from "@/config/mockProducts";
 import HomeBanner from "@/components/HomeBanner";
+import { extractNumericValue } from "@/lib/formatSmartValue";
 
 function Home() {
   const navigate = useNavigate();
@@ -41,8 +42,8 @@ function Home() {
       const response = await axios.get(
         `${API_BASE_URL}/products/getnearestproducts/${user.id}`
       );
-      setNearbyProducts(response.data.data);
-      console.log("Nearest products:", response.data.data);
+      const flattenedProducts = response.data.data.flat();
+      setNearbyProducts(flattenedProducts);
     };
     getLocalProducts();
   }, [user.id]);
@@ -59,9 +60,35 @@ function Home() {
       <Bounded className="pt-0! mb-16">
         <HomeBanner />
         {nearbyProducts.length > 0 && (
-          <div className="w-full flex flex-col items-start justify-start">
+          <div className="w-full flex flex-col items-start justify-start gap-4 mb-8">
             <h3 className="text-lg font-semibold">Nearby Products</h3>
-            <Products mode="horizontal" products={nearbyProducts}></Products>
+            <div className="w-full overflow-x-auto overflow-y-visible scrollbar-hide -mx-4 px-4 py-4">
+              <div className="flex gap-4">
+                {nearbyProducts.map((product, index) => (
+                  <a
+                    key={`nearby-${index}`}
+                    href={`/product/${product.productId}`}
+                    className="relative shrink-0 w-32 sm:w-40 aspect-square rounded-xl overflow-visible cursor-pointer hover:opacity-90 transition-opacity"
+                  >
+                    <img
+                      src={product.productImage}
+                      className="h-full w-full object-cover rounded-xl"
+                      alt={product.productName}
+                    />
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-lg max-w-full">
+                      <p className="text-xs sm:text-sm font-medium text-white text-center whitespace-nowrap">
+                        {product.productName}
+                      </p>
+                    </div>
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 bg-primary px-4 py-1.5 rounded-lg shadow-lg">
+                      <p className="text-sm sm:text-base font-semibold text-white text-center whitespace-nowrap">
+                        {"रू. " + extractNumericValue(product.price)}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         <Products mode="vertical" products={productLists}></Products>

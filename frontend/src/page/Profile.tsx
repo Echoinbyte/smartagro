@@ -80,7 +80,7 @@ function Profile() {
   }
 
   return (
-    <Bounded>
+    <Bounded className="mb-16">
       <StarGrid />
       <main className="w-full max-w-4xl mx-auto flex flex-col items-center justify-start gap-8 px-4">
         <div className="relative w-full flex flex-col items-center gap-4">

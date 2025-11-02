@@ -82,7 +82,7 @@ function Checkout() {
 
       toast.success("Order placed successfully!");
       clearCart();
-      navigate("/orders");
+      navigate("/home");
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Failed to place order. Please try again.");
