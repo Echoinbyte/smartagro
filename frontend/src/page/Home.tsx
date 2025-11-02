@@ -15,6 +15,7 @@ function Home() {
   const navigate = useNavigate();
   const { user } = useUser();
   const [productLists, setProductLists] = useState<UIProduct[]>([]);
+  const [nearbyProducts, setNearbyProducts] = useState<UIProduct[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,6 +36,17 @@ function Home() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const getLocalProducts = async () => {
+      const response = await axios.get(
+        `${API_BASE_URL}/products/getnearestproducts/${user.id}`
+      );
+      setNearbyProducts(response.data.data);
+      console.log("Nearest products:", response.data.data);
+    };
+    getLocalProducts();
+  }, [user.id]);
+
   if (!user || !user.username) {
     navigate("/login");
     toast.error("Please log in to access the home page.");
@@ -46,7 +58,13 @@ function Home() {
       <StarGrid />
       <Bounded className="pt-0! mb-16">
         <HomeBanner />
-        <Products products={productLists}></Products>
+        {nearbyProducts.length > 0 && (
+          <div className="w-full flex flex-col items-start justify-start">
+            <h3 className="text-lg font-semibold">Nearby Products</h3>
+            <Products mode="horizontal" products={nearbyProducts}></Products>
+          </div>
+        )}
+        <Products mode="vertical" products={productLists}></Products>
       </Bounded>
     </main>
   );

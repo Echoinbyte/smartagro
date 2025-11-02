@@ -5,11 +5,23 @@ import { Pagination } from "swiper/modules";
 
 interface ImageSliderProps {
   url: string;
+  mode?: "horizontal" | "vertical";
+  imgClasses?: string;
 }
 
-const ImageSlider = ({ url }: ImageSliderProps) => {
+const ImageSlider = ({
+  url,
+  mode = "vertical",
+  imgClasses,
+}: ImageSliderProps) => {
   return (
-    <div className="group relative bg-zinc-100 aspect-video overflow-hidden rounded-t-xl">
+    <div
+      className={`group relative bg-zinc-100 overflow-hidden ${
+        mode === "horizontal"
+          ? "h-full w-full rounded-l-xl"
+          : "aspect-video rounded-t-xl"
+      }`}
+    >
       <Swiper
         pagination={{
           renderBullet: (_, className) => {
@@ -23,7 +35,7 @@ const ImageSlider = ({ url }: ImageSliderProps) => {
       >
         <SwiperSlide className="relative h-full w-full bg-white flex items-center justify-center">
           <img
-            className="mx-auto h-full w-full object-cover"
+            className={`mx-auto h-full w-full object-cover ${imgClasses}`}
             height={192}
             width={341}
             src={url}
