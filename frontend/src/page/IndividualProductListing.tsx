@@ -91,7 +91,7 @@ function IndividualProductListing() {
 
   return (
     <>
-      <Bounded>
+      <Bounded className="mb-16">
         <StarGrid></StarGrid>
         <main className="h-full w-full flex flex-col items-center justify-center gap-4">
           <div className="relative w-full aspect-video md:h-[350px] lg:h-[400px]">

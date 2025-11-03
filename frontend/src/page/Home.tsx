@@ -48,11 +48,11 @@ function Home() {
     getLocalProducts();
   }, [user.id]);
 
-  if (!user || !user.username) {
-    navigate("/login");
-    toast.error("Please log in to access the home page.");
-    return null;
-  }
+  // if (!user || !user.username) {
+  //   navigate("/login");
+  //   toast.error("Please log in to access the home page.");
+  //   return null;
+  // }
 
   return (
     <main>

@@ -1,5 +1,4 @@
-// export const API_BASE_URL = "https://l2vl5st5-3000.inc1.devtunnels.ms/api/v1";
-export const API_BASE_URL = "http://localhost:3000/api/v1";
+export const API_BASE_URL = "http://localhost:3000";
 
 export interface UserApiResponse {
   statusCode: number;
