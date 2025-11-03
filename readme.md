@@ -1,6 +1,6 @@
 # SmartAgro
 
-A voice-powered agricultural marketplace platform connecting farmers directly with consumers, eliminating middlemen and ensuring fair pricing for all parties.
+A voice-powered agricultural marketplace platform connecting farmers directly with consumers, eliminating middlemen and ensuring fair pricing for all parties. **This project stood third in Nepal's Largest National Level Hackathon (Nepathon)**
 
 ## Problem Statement
 
